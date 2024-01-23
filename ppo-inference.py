@@ -18,19 +18,19 @@ env = CustomEnvRaceCar(
 model = PPO.load("ppo-racecar")
 
 obs, info = env.reset()
-fig,ax = plt.subplots(1,1)
-myobj = ax.imshow(env.render())
+image = env.render()
+plt.imsave(f"frames/frame_{0:04}.png", image)
+
 done = False
 total_rewards=0
+t = 1
 while not done:
     action, _states = model.predict(obs)
     obs, rewards, done, truncated, info = env.step(action)
     total_rewards += rewards
     image = env.render()
-    myobj.set_data(image)
-    fig.canvas.draw_idle()
-    plt.pause(.01)
-
+    plt.imsave(f"frames/frame_{t:04}.png", image)
     done = done
+    t += 1
 
 print(f"Total rewards: {total_rewards}")
