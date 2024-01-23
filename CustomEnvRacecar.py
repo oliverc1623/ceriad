@@ -16,18 +16,14 @@ class CustomEnvRaceCar(gym.Env):
             scenario=scenario,
             render_mode=render_mode,
         )
-        self.action_space = spaces.Dict(
-            {
-                "motor": spaces.Box(low=-1, high=1, shape=(1,), dtype="float32"),
-                "steering": spaces.Box(low=-1, high=1, shape=(1,), dtype="float32"),
-            }
-        )
+        self.action_space = spaces.Box(low=-1, high=1, shape=(2,), dtype="float32")
         self.observation_space = spaces.Box(
             low=0, high=255, shape=(3, 128, 128), dtype=np.uint8
         )
 
     def step(self, action):
-        obs, rewards, done, truncated, info = self.env.step(action)
+        action_dict = {"motor": action[0], "steering": action[1]}
+        obs, rewards, done, truncated, info = self.env.step(action_dict)
         return np.transpose(obs["rgb_camera"], (2,0,1)), rewards, done, truncated, info
 
     def reset(self, seed=None, options=dict(mode="grid")):
@@ -35,7 +31,7 @@ class CustomEnvRaceCar(gym.Env):
         return np.transpose(obs["rgb_camera"], (2,0,1)), info
 
     def render(self):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
