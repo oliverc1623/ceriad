@@ -11,7 +11,7 @@ env = gym.make(
     render_mode= 'rgb_array_follow', # 'rgb_array_follow', 
 )
 
-obs, info = env.reset(options=dict(mode='grid'))
+obs, info = env.reset(seed=47, options=dict(mode='grid'))
 fig,ax = plt.subplots(1,1)
 myobj = ax.imshow(obs['rgb_camera'])
 done = False
