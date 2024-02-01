@@ -1,6 +1,6 @@
 import gymnasium as gym
 import warnings
-
+import matplotlib.pyplot as plt
 
 #ignore deprecation warnings
 warnings.filterwarnings('ignore')
@@ -21,7 +21,7 @@ config = {
         "order": "sorted"
     }
 }
-env = gym.make('highway-v0', render_mode='human')
+env = gym.make('highway-v0', render_mode='rgb_array')
 env.configure(config)
 env.configure({
     "action": {
@@ -34,7 +34,7 @@ env.reset()
 obs, info = env.reset()
 done = truncated = False
 
-#Print discrete action space
+#Print continuous action space
 print(f"Action space: {env.action_space}")
 
 #Print observation space
@@ -67,16 +67,20 @@ for _ in range(10):
 obs, info = env.reset()
 done = truncated = False
 '''
+img = env.render()
+plt.imsave(f"frames/frame_{0:003}.png", img)
 
 #Similar basic loop, but this time we'll be printing state space info for every step
-for _ in range(10):
+for i in range(1,11):
     
     #sample a random action each step
     action = env.action_space.sample()
     
     #use our env method to get available actions
-    print(f"Throttle: {action[0]}")
-    print(f"Steering: {action[1]}")
+    throttle = action[0]
+    steering = action[1]
+    print(f"Throttle: {throttle}")
+    print(f"Steering: {steering}")
 
     #get our current car's x velocity
     x_vel = obs[0, 3] #normalized default
@@ -101,14 +105,18 @@ for _ in range(10):
 
     #Now, let's print the same info, but iterating through the other vehicles in our observation space
     #Our current observation space has 5 rows, meaning we have 5 cars in total. Our ego vehicle is row 0, other vehicles are rows 1 - 4
-    for i in range(1, len(obs)):
+    for j in range(1, len(obs)):
         #all values here will be unnormalized
-        x_position = obs[i, 1] * 100
-        y_position = obs[i, 2] * 100
-        x_velocity = obs[i, 3] * 20
-        y_velocity = obs[i, 4] * 20
+        x_position = obs[j, 1] * 100
+        y_position = obs[j, 2] * 100
+        x_velocity = obs[j, 3] * 20
+        y_velocity = obs[j, 4] * 20
         laneid = round(y_position / 4.0)
-        print(f"Vehicle {i}: X Position: {x_position}, Y Position: {y_position}, X Velocity: {x_velocity}, Y Velocity: {y_velocity}, Current Lane: {laneid}")
-    print("")
+        print(f"Vehicle {j}: X Position: {x_position}, Y Position: {y_position}, X Velocity: {x_velocity}, Y Velocity: {y_velocity}, Current Lane: {laneid}")
+    
+    prompt = f"Describe this driving scene. I am the yellow vehicle. My throttle speed is {throttle} and steering angle is {steering}. My coordinate is ({x_pos_unnormalized}, {y_pos_unnormalized})."
+    
+    print(prompt)
     obs, reward, done, truncated, info = env.step(action)
-    env.render()
+    img = env.render()
+    plt.imsave(f"frames/frame_{i:003}.png", img)
