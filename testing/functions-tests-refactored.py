@@ -16,7 +16,7 @@ config = {
             "vx": [-20, 20],
             "vy": [-20, 20]
         },
-        "absolute": True,
+        "absolute": False,
         "order": "sorted"
     }
 }
@@ -64,5 +64,5 @@ for _ in range(10):
         laneid = round(y_position / 4.0) + 1
         print(f"Vehicle {i}: X Position: {x_position:.2f}, Y Position: {y_position:.2f}, X Velocity: {x_velocity:.2f}, Y Velocity: {y_velocity:.2f}, Current Lane: {laneid}")
 
-    obs, reward, done, truncated, info = env.step(action)
     env.render()
+    obs, reward, done, truncated, info = env.step(action)
