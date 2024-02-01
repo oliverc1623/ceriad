@@ -22,4 +22,4 @@ while 1:
     prompt = "USER: <image>\n" + prompt + "\nAssistant:"
     max_new_tokens = 200
     outputs = pipe(image, prompt=prompt, generate_kwargs={"max_new_tokens": 200})
-    print(outputs[0])
+    print(outputs[0]["generated_text"])
