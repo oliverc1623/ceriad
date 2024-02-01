@@ -79,6 +79,8 @@ for i in range(1,11):
     lane_id = round(y_pos_unnormalized / 4.0) + 1
     print(f"our current lane is: {lane_id}")
 
+    if i == 1:
+        prompt += "The initial state is the following: "
     prompt += f"Here are the ego agent's available action space for throttle and steering commands: {env.action_space}. "
     prompt += f"Ego vehicle: X Position: {x_pos_unnormalized:.2f}, Y Position: {y_pos_unnormalized:.2f}, X Velocity: {x_vel_unnormalized:.2f}, Y Velocity: {y_vel_unnormalized:.2f}, Current Lane: {lane_id}. The other vehicles are: "
 
