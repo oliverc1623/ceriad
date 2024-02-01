@@ -78,7 +78,7 @@ for _ in range(10):
     
     #use our env method to get available actions
     availableActions = env.get_available_actions()
-    print(availableActions)
+    print(f"Available Actions: {availableActions}")
 
     #get our current car's x velocity
     x_vel = obs[0, 3] #normalized default
