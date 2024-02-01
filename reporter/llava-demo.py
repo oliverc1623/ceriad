@@ -18,8 +18,8 @@ model_id = "llava-hf/llava-1.5-7b-hf"
 pipe = pipeline(model=model_id, model_kwargs={"quantization_config": quantization_config})
 
 while 1:
-    prompt = input("USER: <image>\n")
-    prompt += "\nAssistant:"
+    prompt = input("USER: \n")
+    prompt = "USER: <image>\n" + prompt + "\nAssistant:"
     max_new_tokens = 200
     outputs = pipe(image, prompt=prompt, generate_kwargs={"max_new_tokens": 200})
     print(outputs[0])
