@@ -1,4 +1,5 @@
 import gymnasium as gym
+import matplotlib.pyplot as plt
 import warnings
 
 #ignore deprecation warnings
@@ -20,12 +21,14 @@ config = {
         "order": "sorted"
     }
 }
-env = gym.make('highway-v0', render_mode='human')
+env = gym.make('highway-v0', render_mode='rgb_array')
 env.configure(config)
 
 #reset the environment
 obs, info = env.reset()
 done = truncated = False
+
+frame_number = 0 #for saving frame images
 
 #loop through 10 steps, sample random action at each step
 for _ in range(10):
@@ -61,8 +64,11 @@ for _ in range(10):
         y_position = obs[i, 2] * 100
         x_velocity = obs[i, 3] * 20
         y_velocity = obs[i, 4] * 20
-        laneid = round(y_position / 4.0) + 1
+        laneid = lane_id + round(y_position / 4.0) #relative lanes
         print(f"Vehicle {i}: X Position: {x_position:.2f}, Y Position: {y_position:.2f}, X Velocity: {x_velocity:.2f}, Y Velocity: {y_velocity:.2f}, Current Lane: {laneid}")
 
-    env.render()
+    #env.render()
+    img = env.render()
+    plt.imsave(f"../test-frames/frame_{frame_number:003}.png", img)
+    frame_number += 1
     obs, reward, done, truncated, info = env.step(action)
