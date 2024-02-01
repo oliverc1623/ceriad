@@ -1,7 +1,7 @@
 import requests
 from PIL import Image
 
-image = Image.open("frames/frame_000.png")
+image = Image.open("../frames/frame_000.png")
 
 import torch
 from transformers import BitsAndBytesConfig
