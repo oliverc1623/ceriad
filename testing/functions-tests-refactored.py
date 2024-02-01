@@ -51,7 +51,7 @@ for _ in range(10):
     #print our car's current lane
     lane_id = round(y_pos_unnormalized / 4.0) + 1
 
-    print(f"Ego vehicle: X Position: {x_pos_unnormalized}, Y Position: {y_pos_unnormalized}, X Velocity: {x_vel_unnormalized}, Y Velocity: {y_vel_unnormalized}, Current Lane: {lane_id}")
+    print(f"Ego vehicle: X Position: {x_pos_unnormalized:.2f}, Y Position: {y_pos_unnormalized:.2f}, X Velocity: {x_vel_unnormalized:.2f}, Y Velocity: {y_vel_unnormalized:.2f}, Current Lane: {lane_id}")
 
     #Now, let's print the same info, but iterating through the other vehicles in our observation space
     #Our current observation space has 5 rows, meaning we have 5 cars in total. Our ego vehicle is row 0, other vehicles are rows 1 - 4
@@ -62,7 +62,7 @@ for _ in range(10):
         x_velocity = obs[i, 3] * 20
         y_velocity = obs[i, 4] * 20
         laneid = round(y_position / 4.0) + 1
-        print(f"Vehicle {i}: X Position: {x_position}, Y Position: {y_position}, X Velocity: {x_velocity}, Y Velocity: {y_velocity}, Current Lane: {laneid}")
+        print(f"Vehicle {i}: X Position: {x_position:.2f}, Y Position: {y_position:.2f}, X Velocity: {x_velocity:.2f}, Y Velocity: {y_velocity:.2f}, Current Lane: {laneid}")
 
     obs, reward, done, truncated, info = env.step(action)
     env.render()
