@@ -1,4 +1,5 @@
 # cse290k
 
 Installs:
-```pip install highway-env```
+```pip3 install highway-env```
+```pip3 install rich```
