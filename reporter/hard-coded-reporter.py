@@ -17,7 +17,7 @@ config = {
             "vx": [-20, 20],
             "vy": [-20, 20]
         },
-        "absolute": True,
+        "absolute": False,
         "order": "sorted"
     }
 }
@@ -40,42 +40,18 @@ print(f"Action space: {env.action_space}")
 #Print observation space
 print(obs)
 
-'''
-#Basic loop to get available actions from the environment, idling for each step
-while not (done or truncated):
-    action = env.action_type.actions_indexes["IDLE"] # Your agent code here
-    availableActions = env.get_available_actions()
-    print(availableActions)
-    obs, reward, done, truncated, info = env.step(action)
-
-#reset the environment
-obs, info = env.reset()
-done = truncated = False 
-'''
-
-'''
-#Basic loop, taking a sample of the action space for 10 steps
-#Available actions output correspondes to ACTIONS_ALL dictionary
-for _ in range(10):
-    action = env.action_space.sample()
-    availableActions = env.get_available_actions()
-    print(availableActions)
-    obs, reward, done, truncated, info = env.step(action)
-    env.render()
-
-#reset the environment
-obs, info = env.reset()
-done = truncated = False
-'''
 img = env.render()
 plt.imsave(f"frames/frame_{0:003}.png", img)
+
+prompt = ""
 
 #Similar basic loop, but this time we'll be printing state space info for every step
 for i in range(1,11):
     
     #sample a random action each step
     action = env.action_space.sample()
-    
+    action[1] = 0.01
+
     #use our env method to get available actions
     throttle = action[0]
     steering = action[1]
@@ -100,10 +76,11 @@ for i in range(1,11):
     print(f"(x, y) coordinates: ({x_pos_unnormalized}, {y_pos_unnormalized})")
 
     #print our car's current lane
-    lane_id = round(y_pos_unnormalized / 4.0)
+    lane_id = round(y_pos_unnormalized / 4.0) + 1
     print(f"our current lane is: {lane_id}")
 
-    prompt = f"I am a yellow car on a highway. Here are is my current state: throttle speed is {throttle}, steering angle is {steering}, coordinate is ({x_pos_unnormalized}, {y_pos_unnormalized}), x Velocity is {x_vel_unnormalized}, y Velocity: {y_vel}, current lane is {lane_id}. The other vehicles are at "
+    prompt += f"Here are the ego agent's available action space for throttle and steering commands: {env.action_space}. "
+    prompt += f"Ego vehicle: X Position: {x_pos_unnormalized:.2f}, Y Position: {y_pos_unnormalized:.2f}, X Velocity: {x_vel_unnormalized:.2f}, Y Velocity: {y_vel_unnormalized:.2f}, Current Lane: {lane_id}. The other vehicles are: "
 
     #Now, let's print the same info, but iterating through the other vehicles in our observation space
     #Our current observation space has 5 rows, meaning we have 5 cars in total. Our ego vehicle is row 0, other vehicles are rows 1 - 4
@@ -113,10 +90,12 @@ for i in range(1,11):
         y_position = obs[j, 2] * 100
         x_velocity = obs[j, 3] * 20
         y_velocity = obs[j, 4] * 20
-        laneid = round(y_position / 4.0)
-        prompt += f" X Position: {x_position}, Y Position: {y_position}, X Velocity: {x_velocity}, Y Velocity: {y_velocity}, Current Lane: {laneid}"
+        laneid = round(y_position / 4.0) + 1
+        prompt += f" Vehicle {j}: X Position: {x_position:.2f}, Y Position: {y_position:.2f}, X Velocity: {x_velocity:.2f}, Y Velocity: {y_velocity:.2f}, Current Lane: {laneid}."
     
+    prompt += " What should the ego agent's next task be?"
     print(prompt)
     obs, reward, done, truncated, info = env.step(action)
     img = env.render()
     plt.imsave(f"frames/frame_{i:003}.png", img)
+    prompt = ""
