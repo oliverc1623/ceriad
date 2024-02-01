@@ -90,7 +90,7 @@ for i in range(1,11):
     #get our current car's y velocity
     y_vel = obs[0, 4]
     y_vel_unnormalized = y_vel * 20
-    print(f"y Velocity: {y_vel}")
+    print(f"y Velocity: {y_vel_unnormalized}")
 
     #get our car's current x and y coordinates in the graph
     x_pos = obs[0, 1]
