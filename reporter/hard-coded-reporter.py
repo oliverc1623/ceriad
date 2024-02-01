@@ -92,7 +92,7 @@ for i in range(1,11):
         y_position = obs[j, 2] * 100
         x_velocity = obs[j, 3] * 20
         y_velocity = obs[j, 4] * 20
-        laneid = round(y_position / 4.0) + 1
+        laneid = lane_id + round(y_position / 4.0)
         prompt += f" Vehicle {j}: X Position: {x_position:.2f}, Y Position: {y_position:.2f}, X Velocity: {x_velocity:.2f}, Y Velocity: {y_velocity:.2f}, Current Lane: {laneid}."
     
     prompt += " What should the ego agent's next task be?"
