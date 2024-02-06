@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chang-xgl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xgl
+  template:
+    metadata:
+      labels:
+        app: xgl
+    spec:
+      hostname: xgl
+      containers:
+      - name: xgl
+        image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
+        env:
+        - name: TZ
+          value: "UTC"
+        - name: SIZEW
+          value: "1920"
+        - name: SIZEH
+          value: "1080"
+        - name: REFRESH
+          value: "60"
+        - name: DPI
+          value: "96"
+        - name: CDEPTH
+          value: "24"
+        - name: VIDEO_PORT
+          value: "DP-0"
+        # Choose either `value:` or `secretKeyRef:` but not both at the same time
+        - name: PASSWD
+#          value: "mypasswd"
+          valueFrom:
+            secretKeyRef:
+              name: my-pass
+              key: my-pass
+        # Uncomment this to enable noVNC, disabing selkies-gstreamer and ignoring all its parameters except `BASIC_AUTH_PASSWORD`, which will be used for authentication with noVNC, `BASIC_AUTH_PASSWORD` defaults to `PASSWD` if not provided
+#        - name: NOVNC_ENABLE
+#          value: "true"
+        # Additional view-only password only applicable to the noVNC interface, choose either `value:` or `secretKeyRef:` but not both at the same time
+#        - name: NOVNC_VIEWPASS
+#          value: "mypasswd"
+#          valueFrom:
+#            secretKeyRef:
+#              name: my-pass
+#              key: my-pass
+        ###
+        # selkies-gstreamer parameters, for additional configurations see lines that start with "parser.add_argument" in https://github.com/selkies-project/selkies-gstreamer/blob/master/src/selkies_gstreamer/__main__.py
+        ###
+        # Change `WEBRTC_ENCODER` to `x264enc` if your GPU doesn't support `H.264 (AVCHD)` under the `NVENC - Encoding` section in https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new
+        - name: WEBRTC_ENCODER
+          value: "nvh264enc"
+        - name: WEBRTC_ENABLE_RESIZE
+          value: "false"
+        - name: ENABLE_BASIC_AUTH
+          value: "true"
+        # Defaults to `PASSWD` if unspecified, choose either `value:` or `secretKeyRef:` but not both at the same time
+#        - name: BASIC_AUTH_PASSWORD
+#          value: "mypasswd"
+#          valueFrom:
+#            secretKeyRef:
+#              name: my-pass
+#              key: my-pass
+        ###
+        # Uncomment below to use a TURN server for improved network compatibility
+        ###
+        - name: TURN_HOST
+          value: "turn.nrp-nautilus.io"
+        - name: TURN_PORT
+          value: "3478"
+        # Provide only `TURN_SHARED_SECRET` for time-limited shared secret authentication or both `TURN_USERNAME` and `TURN_PASSWORD` for legacy long-term authentication, but do not provide both authentication methods at the same time
+        - name: TURN_SHARED_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: my-pass
+              key: turn-secret
+        - name: TURN_USERNAME
+          value: "username"
+        # Choose either `value:` or `secretKeyRef:` but not both at the same time
+        - name: TURN_PASSWORD
+#          value: "mypasswd"
+          valueFrom:
+            secretKeyRef:
+              name: turn-password
+              key: turn-password
+        # Change to `tcp` if the UDP protocol is throttled or blocked in your client network, or when the TURN server does not support UDP
+        - name: TURN_PROTOCOL
+          value: "udp"
+        # You need a valid hostname and a certificate from authorities such as ZeroSSL (Let's Encrypt may have issues) to enable this
+        - name: TURN_TLS
+          value: "false"
+        stdin: true
+        tty: true
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            memory: 64Gi
+            cpu: "16"
+            nvidia.com/gpu: 2
+          requests:
+            memory: 16Gi
+            cpu: "4"
+            nvidia.com/gpu: 2
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /cache
+          name: xgl-cache-vol
+        - mountPath: /mnt/persistent
+          name: xgl-root-vol
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      - name: xgl-cache-vol
+        # emptyDir: {}
+        persistentVolumeClaim:
+          claimName: elochang-xgl-cache
+      - name: xgl-root-vol
+        # emptyDir: {}
+        persistentVolumeClaim:
+          claimName: elochang-seaweed-volume
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nautilus.io/vis
+                operator: NotIn
+                values:
+                - suncave
+#              - key: topology.kubernetes.io/region
+#                operator: In
+#                values:
+#                - us-west
