@@ -29,8 +29,8 @@ obs, info = env.reset()
 done = truncated = False
 
 
-#loop through 10 steps, sample random action at each step
-for _ in range(10):
+#loop through environment, sample random action at each step
+while not (done or truncated):
     
     #sample a random action each step
     action = env.action_space.sample()
