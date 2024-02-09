@@ -20,7 +20,7 @@ https://docs.nationalresearchplatform.org/userdocs/start/quickstart/
 https://docs.nationalresearchplatform.org/userdocs/running/gui-desktop/
 
 ### 2. Once you have installed kubernetes command and can view the AIEA lab's namespace pvc create the following:
-- A persistent volume claim (PVC) with seaweed-nvme for your main storage. 64Gb should suffice if you're just trying to run CARLA without machine learning. Note that is is important that you choose seaweed-nvme for your storage because it is better high read/write performance compared to ceph-rock. 
+- A persistent volume claim (PVC) with seaweed-nvme for your main storage. 64Gb should suffice if you're just trying to run CARLA without machine learning. Note that is is important that you choose seaweed-nvme for your storage because it has a better high read/write performance compared to ceph-rock. 
 - A persistent volume claim for your deployment's cache. I got by with 1Gb, for reference. 
 
 ### 3. Nautilus' GUI desktop runs in your web browser to port-forward the GUI screen. So you will need to create two secrets for the yaml file below.
