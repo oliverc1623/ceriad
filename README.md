@@ -16,6 +16,8 @@ Installs:
 https://docs.nationalresearchplatform.org/userdocs/start/quickstart/
 
 - If your not in the AIEA lab namespace please email Coen Adler <ctadler@ucsc.edu> or Shreedhar Jangam <sjangam@ucsc.edu>
+- Also see this guide for reference before starting 
+https://docs.nationalresearchplatform.org/userdocs/running/gui-desktop/
 
 ### 2. Once you have installed kubernetes command and can view the AIEA lab's namespace pvc create the following:
 - A persistent volume claim (PVC) with seaweed-nvme for your main storage. 64Gb should suffice if you're just trying to run CARLA without machine learning. Note that is is important that you choose seaweed-nvme for your storage because it is better high read/write performance compared to ceph-rock. 
