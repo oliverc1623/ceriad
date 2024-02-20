@@ -12,6 +12,8 @@ from carla_gym.carla_api.PythonAPI.agents.navigation.basic_agent import BasicAge
 from carla_gym.core.maps.nav_utils import get_next_waypoint
 
 step = 0
+# Path to save the JSON file
+file_path = '/mnt/persistent/carla-llava-data/train.json'
 
 def vehicle_control_to_action(vehicle_control, is_discrete):
     """Vehicle control object to action."""
@@ -108,6 +110,28 @@ def process_image(image):
     print(filtered_values)
     print(f"step: {step}")
 
+    # Prepare the data to write to JSON
+    json_data = [
+        {
+            "id": step,  # Placeholder, as the unique ID generation is not specified
+            "image": f"observation_{step:006}.png",  # Assuming a generic image file name
+            "conversations": [
+                {
+                    "from": "human",
+                    "value": "What are the objects worth noting in the current scenario?"
+                },
+                {
+                    "from": "gpt",
+                    "value": ", ".join([f"{k}" for k, v in filtered_values.items()])
+                }
+            ]
+        }
+    ]
+
+    # Writing the filtered data to a JSON file
+    with open(file_path, 'w') as json_file:
+        json.dump(json_data, json_file, indent=4)
+
     return "String from segmented image"
 
 if __name__ == "__main__":
@@ -150,7 +174,7 @@ if __name__ == "__main__":
                 action_dict[actor_id] = vehicle_control_to_action(agent.run_step(), env.discrete_action_space)
             obs, reward, term, trunc, info = env.step(action_dict)
             ob = (obs[actor_id] * 255).astype(np.uint8)
-            plt.imsave(f"frames/observation_{step:006}.png", ob)
+            plt.imsave(f"~/../../mnt/persistent/carla-llava-data/frames/observation_{step:006}.png", ob)
             for actor_id in total_reward_dict.keys():
                 total_reward_dict[actor_id] += reward[actor_id]
             print(":{}\n\t".join(["Step#", "rew", "ep_rew", "done{}"]).format(step, reward, total_reward_dict, done))
