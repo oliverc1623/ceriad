@@ -14,6 +14,7 @@ from carla_gym.core.maps.nav_utils import get_next_waypoint
 step = 0
 # Path to save the JSON file
 file_path = '/mnt/persistent/carla-llava-data/train.json'
+listObj = []
 
 def vehicle_control_to_action(vehicle_control, is_discrete):
     """Vehicle control object to action."""
@@ -111,7 +112,7 @@ def process_image(image):
     print(f"step: {step}")
 
     # Prepare the data to write to JSON
-    json_data = [
+    listObj.append(
         {
             "id": step,  # Placeholder, as the unique ID generation is not specified
             "image": f"observation_{step:006}.png",  # Assuming a generic image file name
@@ -126,11 +127,10 @@ def process_image(image):
                 }
             ]
         }
-    ]
-
+    )
     # Writing the filtered data to a JSON file
     with open(file_path, 'w') as json_file:
-        json.dump(json_data, json_file, indent=4)
+        json.dump(listObj, json_file, indent=4, separators=(',',': '))
 
     return "String from segmented image"
 
@@ -174,7 +174,7 @@ if __name__ == "__main__":
                 action_dict[actor_id] = vehicle_control_to_action(agent.run_step(), env.discrete_action_space)
             obs, reward, term, trunc, info = env.step(action_dict)
             ob = (obs[actor_id] * 255).astype(np.uint8)
-            plt.imsave(f"~/../../mnt/persistent/carla-llava-data/frames/observation_{step:006}.png", ob)
+            plt.imsave(f"/mnt/persistent/carla-llava-data/frames/observation_{step:006}.png", ob)
             for actor_id in total_reward_dict.keys():
                 total_reward_dict[actor_id] += reward[actor_id]
             print(":{}\n\t".join(["Step#", "rew", "ep_rew", "done{}"]).format(step, reward, total_reward_dict, done))
