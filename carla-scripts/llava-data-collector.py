@@ -1,183 +1,216 @@
-"""CARLA basic agent acting in the env loop."""
+import glob
+import os
+import sys
+import time
+
+try:
+    sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+except IndexError:
+    pass
+
+import carla
 
 import argparse
-import math
-import time
-import matplotlib.pyplot as plt
-import numpy as np
-import json
+import logging
+import random
 
-from carla_gym.multi_env import MultiActorCarlaEnv, DISCRETE_ACTIONS
-from carla_gym.carla_api.PythonAPI.agents.navigation.basic_agent import BasicAgent
-from carla_gym.core.maps.nav_utils import get_next_waypoint
+def main():
+    argparser = argparse.ArgumentParser(
+        description=__doc__)
+    argparser.add_argument(
+        '--host',
+        metavar='H',
+        default='127.0.0.1',
+        help='IP of the host server (default: 127.0.0.1)')
+    argparser.add_argument(
+        '-p', '--port',
+        metavar='P',
+        default=2000,
+        type=int,
+        help='TCP port to listen to (default: 2000)')
+    args = argparser.parse_args()
 
-step = 0
-# Path to save the JSON file
-file_path = '/mnt/persistent/carla-llava-data/train.json'
-listObj = []
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
-def vehicle_control_to_action(vehicle_control, is_discrete):
-    """Vehicle control object to action."""
-    if vehicle_control.hand_brake:
-        continuous_action = [-1.0, vehicle_control.steer]
-    else:
-        if vehicle_control.reverse:
-            continuous_action = [vehicle_control.brake - vehicle_control.throttle, vehicle_control.steer]
-        else:
-            continuous_action = [vehicle_control.throttle - vehicle_control.brake, vehicle_control.steer]
+    client = carla.Client(args.host, args.port)
+    client.set_timeout(10.0)
 
-    def dist(a, b):
-        """Distance function."""
-        return math.sqrt((a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]))
+    try:
 
-    if is_discrete:
-        closest_action = 0
-        shortest_action_distance = dist(continuous_action, DISCRETE_ACTIONS[0])
+        world = client.get_world()
+        ego_vehicle = None
+        ego_cam = None
+        ego_col = None
+        ego_lane = None
+        ego_obs = None
+        ego_gnss = None
+        ego_imu = None
 
-        for i in range(1, len(DISCRETE_ACTIONS)):
-            d = dist(continuous_action, DISCRETE_ACTIONS[i])
-            if d < shortest_action_distance:
-                closest_action = i
-                shortest_action_distance = d
-        return closest_action
+        # --------------
+        # Start recording
+        # --------------
+        """
+        client.start_recorder('~/tutorial/recorder/recording01.log')
+        """
 
-    return continuous_action
+        # --------------
+        # Spawn ego vehicle
+        # --------------
 
-def process_image(image):
-    image_data = np.frombuffer(image.raw_data, dtype=np.dtype("uint8"))
-    image_data = np.reshape(image_data, (image.height, image.width, 4))  # RGBA format
-    # The object class is encoded in the red channel.
-    semantic_image = image_data[:, :, 2]  # Using the red channel for class information
+        player_max_speed = 1.589
+        player_max_speed_fast = 3.71
 
-    num_none = np.sum(semantic_image == 0)
-    num_roads = np.sum(semantic_image == 1)
-    num_sidewalk = np.sum(semantic_image == 2)
-    num_building = np.sum(semantic_image == 3)
-    num_wall = np.sum(semantic_image == 4)
-    num_fence = np.sum(semantic_image == 5)
-    num_pole = np.sum(semantic_image == 6)
-    num_trafficlight = np.sum(semantic_image == 7)
-    num_trafficsign = np.sum(semantic_image == 8)
-    num_vegetation = np.sum(semantic_image == 9)
-    num_terrian = np.sum(semantic_image == 10)
-    num_sky = np.sum(semantic_image == 11)
-    num_pedestrian = np.sum(semantic_image == 12)
-    num_rider = np.sum(semantic_image == 13)
-    num_car = np.sum(semantic_image == 14)
-    num_truck = np.sum(semantic_image == 15)
-    num_bus = np.sum(semantic_image == 16)
-    num_train = np.sum(semantic_image == 17)
-    num_motorcycle = np.sum(semantic_image == 18)
-    num_bicycle = np.sum(semantic_image == 19)
-    num_static = np.sum(semantic_image == 20)
-    num_dynamic = np.sum(semantic_image == 21)
-    num_other = np.sum(semantic_image == 22)
-    num_water = np.sum(semantic_image == 23)
-    num_RoadLine = np.sum(semantic_image == 24)
-    num_Ground = np.sum(semantic_image == 25)
-    num_bridge = np.sum(semantic_image == 26)
+        # Get the ego vehicle
+        while ego_vehicle is None:
+            print("Waiting for the ego vehicle...")
+            time.sleep(1)
+            possible_vehicles = world.get_actors().filter('vehicle.*')
+            for vehicle in possible_vehicles:
+                if vehicle.attributes['role_name'] == 'hero':
+                    print("Ego vehicle found")
+                    ego_vehicle = vehicle
+                    break
 
-    objects = {
-        "None": num_none,
-        "Road": num_roads,
-        "Sidewalk": num_sidewalk,
-        "Building": num_building,
-        "Wall": num_wall,
-        "Fence": num_fence,
-        "Pole": num_pole,
-        "Traffic light": num_trafficlight,
-        "Traffic sign": num_trafficsign,
-        "Vegetation": num_vegetation,
-        "Terrian": num_terrian,
-        "Sky": num_sky,
-        "Pedestrian": num_pedestrian,
-        "Rider": num_rider,
-        "Car": num_car,
-        "Truck": num_truck,
-        "Bus": num_bus,
-        "Train": num_train,
-        "Motorcycle": num_motorcycle,
-        "Bicycle": num_bicycle,
-        "Static": num_static,
-        "Dynamic": num_dynamic,
-        "Other": num_other,
-        "Water": num_water,
-        "Roadline": num_RoadLine,
-        "Ground": num_Ground,
-        "Bridge": num_bridge
-    }
+        # --------------
+        # Add a RGB camera sensor to ego vehicle.
+        # --------------
+        cam_bp = None
+        cam_bp = world.get_blueprint_library().find('sensor.camera.rgb')
+        cam_bp.set_attribute("image_size_x",str(120))
+        cam_bp.set_attribute("image_size_y",str(120))
+        cam_bp.set_attribute("fov",str(105))
+        cam_location = carla.Location(z=2.5)
+        cam_transform = carla.Transform(cam_location)
+        ego_cam = world.spawn_actor(cam_bp,cam_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        ego_cam.listen(lambda image: image.save_to_disk('~/tutorial/output/%.6d.jpg' % image.frame))
 
-    filtered_values = {k: v for k, v in objects.items() if v > 10000}
-    print(filtered_values)
-    print(f"step: {step}")
+        # --------------
+        # Add collision sensor to ego vehicle.
+        # --------------
+        """
+        col_bp = world.get_blueprint_library().find('sensor.other.collision')
+        col_location = carla.Location(0,0,0)
+        col_rotation = carla.Rotation(0,0,0)
+        col_transform = carla.Transform(col_location,col_rotation)
+        ego_col = world.spawn_actor(col_bp,col_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def col_callback(colli):
+            print("Collision detected:\n"+str(colli)+'\n')
+        ego_col.listen(lambda colli: col_callback(colli))
+        """
 
-    # Prepare the data to write to JSON
-    listObj.append(
-        {
-            "id": step,  # Placeholder, as the unique ID generation is not specified
-            "image": f"observation_{step:006}.png",  # Assuming a generic image file name
-            "conversations": [
-                {
-                    "from": "human",
-                    "value": "What are the objects worth noting in the current scenario?"
-                },
-                {
-                    "from": "gpt",
-                    "value": ", ".join([f"{k}" for k, v in filtered_values.items()])
-                }
-            ]
-        }
-    )
-    # Writing the filtered data to a JSON file
-    with open(file_path, 'w') as json_file:
-        json.dump(listObj, json_file, indent=4, separators=(',',': '))
+        # --------------
+        # Add Lane invasion sensor to ego vehicle.
+        # --------------
+        """
+        lane_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
+        lane_location = carla.Location(0,0,0)
+        lane_rotation = carla.Rotation(0,0,0)
+        lane_transform = carla.Transform(lane_location,lane_rotation)
+        ego_lane = world.spawn_actor(lane_bp,lane_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def lane_callback(lane):
+            print("Lane invasion detected:\n"+str(lane)+'\n')
+        ego_lane.listen(lambda lane: lane_callback(lane))
+        """
 
-    return "String from segmented image"
+        # --------------
+        # Add Obstacle sensor to ego vehicle.
+        # --------------
+        """
+        obs_bp = world.get_blueprint_library().find('sensor.other.obstacle')
+        obs_bp.set_attribute("only_dynamics",str(True))
+        obs_location = carla.Location(0,0,0)
+        obs_rotation = carla.Rotation(0,0,0)
+        obs_transform = carla.Transform(obs_location,obs_rotation)
+        ego_obs = world.spawn_actor(obs_bp,obs_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def obs_callback(obs):
+            print("Obstacle detected:\n"+str(obs)+'\n')
+        ego_obs.listen(lambda obs: obs_callback(obs))
+        """
 
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description="CARLA Manual Control Client")
-    argparser.add_argument("--xml_config_path", default="configs.xml", help="Path to the xml config file")
-    argparser.add_argument("--maps_path", default="/Game/Carla/Maps/", help="Path to the CARLA maps")
-    argparser.add_argument("--render_mode", default="human", help="Path to the CARLA maps")
+        # --------------
+        # Add GNSS sensor to ego vehicle.
+        # --------------
+        """
+        gnss_bp = world.get_blueprint_library().find('sensor.other.gnss')
+        gnss_location = carla.Location(0,0,0)
+        gnss_rotation = carla.Rotation(0,0,0)
+        gnss_transform = carla.Transform(gnss_location,gnss_rotation)
+        gnss_bp.set_attribute("sensor_tick",str(3.0))
+        ego_gnss = world.spawn_actor(gnss_bp,gnss_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def gnss_callback(gnss):
+            print("GNSS measure:\n"+str(gnss)+'\n')
+        ego_gnss.listen(lambda gnss: gnss_callback(gnss))
+        """
 
-    args = vars(argparser.parse_args())
-    args["discrete_action_space"] = False
-    # The scenario xml config should have "enable_planner" flag
-    env = MultiActorCarlaEnv(**args, actor_render_width=224, actor_render_height=224, verbose=False)
-    # otherwise for PZ AEC: env = carla_gym.env(**args)
+        # --------------
+        # Add IMU sensor to ego vehicle.
+        # --------------
+        """
+        imu_bp = world.get_blueprint_library().find('sensor.other.imu')
+        imu_location = carla.Location(0,0,0)
+        imu_rotation = carla.Rotation(0,0,0)
+        imu_transform = carla.Transform(imu_location,imu_rotation)
+        imu_bp.set_attribute("sensor_tick",str(3.0))
+        ego_imu = world.spawn_actor(imu_bp,imu_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def imu_callback(imu):
+            print("IMU measure:\n"+str(imu)+'\n')
+        ego_imu.listen(lambda imu: imu_callback(imu))
+        """
 
-    for _ in range(1):
-        agent_dict = {}
-        obs = env.reset()
-        total_reward_dict = {}
-        import carla
-        ss_bp = env.world.get_blueprint_library().find('sensor.camera.semantic_segmentation')
-        #ss_bp.set_attribute('sensor_tick', '1.0')
+        # --------------
+        # Place spectator on ego spawning
+        # --------------
+        """
+        spectator = world.get_spectator()
+        world_snapshot = world.wait_for_tick()
+        spectator.set_transform(ego_vehicle.get_transform())
+        """
 
-        # agents init
-        for actor_id in env.actor_configs.keys():
-            # Set the goal for the planner to be 0.2 m after the destination just to be sure
-            dest_loc = get_next_waypoint(env.world, env._end_pos[actor_id], 20.0)
-            agent = BasicAgent(env._scenario_objects[actor_id], target_speed=40)
-            agent.set_destination(dest_loc)
-            agent_dict[actor_id] = agent
+        # --------------
+        # Enable autopilot for ego vehicle
+        # --------------
+        ego_vehicle.set_autopilot(True, 5000)
 
-        camera_init_trans = carla.Transform(carla.Location(z=2.5))
-        ss_bp = env.world.spawn_actor(ss_bp, camera_init_trans, attach_to=env._scenario_objects["vehicle1"])
-        ss_bp.listen(process_image)
+        # --------------
+        # Game loop. Prevents the script from finishing.
+        # --------------
+        while True:
+            world_snapshot = world.wait_for_tick()
 
-        start = time.time()
-        done = env.dones
-        while not done["__all__"]:
-            action_dict = {}
-            for actor_id, agent in agent_dict.items():
-                action_dict[actor_id] = vehicle_control_to_action(agent.run_step(), env.discrete_action_space)
-            obs, reward, term, trunc, info = env.step(action_dict)
-            ob = (obs[actor_id] * 255).astype(np.uint8)
-            plt.imsave(f"/mnt/persistent/carla-llava-data/frames/observation_{step:006}.png", ob)
-            for actor_id in total_reward_dict.keys():
-                total_reward_dict[actor_id] += reward[actor_id]
-            print(":{}\n\t".join(["Step#", "rew", "ep_rew", "done{}"]).format(step, reward, total_reward_dict, done))
-            step += 1
-        print(f"{step / (time.time() - start)} fps")
-    env.close()
+    finally:
+        # --------------
+        # Stop recording and destroy actors
+        # --------------
+        client.stop_recorder()
+        if ego_vehicle is not None:
+            if ego_cam is not None:
+                ego_cam.stop()
+                ego_cam.destroy()
+            if ego_col is not None:
+                ego_col.stop()
+                ego_col.destroy()
+            if ego_lane is not None:
+                ego_lane.stop()
+                ego_lane.destroy()
+            if ego_obs is not None:
+                ego_obs.stop()
+                ego_obs.destroy()
+            if ego_gnss is not None:
+                ego_gnss.stop()
+                ego_gnss.destroy()
+            if ego_imu is not None:
+                ego_imu.stop()
+                ego_imu.destroy()
+            ego_vehicle.destroy()
+
+if __name__ == '__main__':
+
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print('\nDone with tutorial_ego.')
