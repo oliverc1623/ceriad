@@ -85,7 +85,6 @@ def main():
                     ego_vehicle = vehicle
                     break
 
-
         # --------------
         # Add a RGB camera sensor to ego vehicle.
         # --------------
@@ -94,7 +93,7 @@ def main():
         cam_bp.set_attribute("image_size_x",str(120))
         cam_bp.set_attribute("image_size_y",str(120))
         cam_bp.set_attribute("fov",str(105))
-        cam_bp.set_attribute("sensor_tick",str(1))
+        #cam_bp.set_attribute("sensor_tick",str(1))
         cam_location = carla.Location(x=1, z=2.5)
         cam_transform = carla.Transform(cam_location)
         ego_cam = world.spawn_actor(cam_bp,cam_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
@@ -102,11 +101,9 @@ def main():
         ## initialize sensor data dictionary
         image_w = cam_bp.get_attribute("image_size_x").as_int()
         image_h = cam_bp.get_attribute("image_size_y").as_int()
-        sensor_data = {'image': np.zeros((image_h, image_w, 3)),
-                       'frame': 0}
+        sensor_data = {'image': np.zeros((image_h, image_w, 3))}
         def rgb_callback(image, data_dict):
             data_dict['image'] = np.reshape(np.copy(image.raw_data), (image.height, image.width, 4))
-            data_dict['frame'] = image.frame
         ego_cam.listen(lambda image: rgb_callback(image, sensor_data))
 
         # --------------
@@ -140,8 +137,8 @@ def main():
         # Add Obstacle sensor to ego vehicle.
         # --------------
         obs_bp = world.get_blueprint_library().find('sensor.other.obstacle')
-        obs_bp.set_attribute("only_dynamics",str(False))
-        obs_bp.set_attribute("sensor_tick",str(1))
+        obs_bp.set_attribute("only_dynamics",str(True))
+        #obs_bp.set_attribute("sensor_tick",str(1))
         obs_location = carla.Location(0,0,0)
         obs_rotation = carla.Rotation(0,0,0)
         obs_transform = carla.Transform(obs_location,obs_rotation)
@@ -185,11 +182,9 @@ def main():
         # --------------
         # Place spectator on ego spawning
         # --------------
-        """
         spectator = world.get_spectator()
         world_snapshot = world.wait_for_tick()
         spectator.set_transform(ego_vehicle.get_transform())
-        """
 
         # --------------
         # Enable autopilot for ego vehicle
@@ -200,20 +195,9 @@ def main():
         file_path = 'train.json'
         listObj = []
 
-        # --------------
-        # Game loop. Prevents the script from finishing.
-        # --------------
-        while True:
-            world_snapshot = world.wait_for_tick()
-
-            # --------------
-            # Spectator on ego position
-            # --------------
-            spectator = world.get_spectator()
-            spectator.set_transform(ego_vehicle.get_transform())
-
-            image = sensor_data['image']
-            frame = sensor_data['frame']
+        def collect_data(world_snapshot, data_dict):
+            image = data_dict['image']
+            frame = world_snapshot.frame
             plt.imsave(f'frames/obs_{frame:006}.jpg', image)
 
             ego_vehicle_control = ego_vehicle.get_control()
@@ -222,8 +206,8 @@ def main():
 
             obstacle = "None"
             distance = 0
-            if 'obstacleDetection' in sensor_data:
-                obstacleDetection = sensor_data['obstacleDetection']
+            if 'obstacleDetection' in data_dict:
+                obstacleDetection = data_dict['obstacleDetection']
                 obstacle = obstacleDetection['other_actor'].semantic_tags
                 print(obstacle)
                 distance = obstacleDetection['distance']
@@ -252,7 +236,14 @@ def main():
             with open(file_path, 'w') as json_file:
                 json.dump(listObj, json_file, indent=4, separators=(',',': '))
 
-            time.sleep(1)
+        # --------------
+        # Game loop. Prevents the script from finishing.
+        # --------------
+        while True:
+            world_snapshot = world.wait_for_tick(10.0)
+            # Register a callback to get called every time we receive a new snapshot.
+            world.on_tick(lambda world_snapshot: collect_data(world_snapshot, sensor_data))
+            spectator.set_transform(ego_vehicle.get_transform())
 
     finally:
         # --------------
