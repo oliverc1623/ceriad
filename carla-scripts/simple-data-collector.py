@@ -5,7 +5,6 @@ import time
 import json
 import datetime
 
-
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -15,7 +14,6 @@ except IndexError:
     pass
 
 import carla
-
 import argparse
 import logging
 import random
@@ -40,7 +38,7 @@ def append_data_to_json(data):
     with open(data_file_path, 'a') as data_file:
         if data_file.tell() > 1:  # If file is not empty, add a comma
             data_file.write(',')
-        json.dump(data, data_file)
+        json.dump(data, data_file, indent=4, separators=(',',': '))
 
 # Function to finalize the JSON file
 def finalize_json_file():
@@ -81,10 +79,11 @@ def collect_data():
     obstacle_bp = blueprint_library.find('sensor.other.obstacle')
 
     # Adjust sensor settings if necessary
-    camera_bp.set_attribute('image_size_x', '800')
-    camera_bp.set_attribute('image_size_y', '600')
+    camera_bp.set_attribute('image_size_x', '120')
+    camera_bp.set_attribute('image_size_y', '120')
     camera_bp.set_attribute('fov', '90')
     camera_bp.set_attribute('sensor_tick','1')
+    obstacle_bp.set_attribute('only_dynamics','True')
 
     # Collect data for a certain amount of time
     try:
