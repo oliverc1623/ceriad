@@ -41,6 +41,11 @@ def main():
     try:
 
         world = client.get_world()
+        settings = world.get_settings()
+        settings.fixed_delta_seconds = 0.05
+        settings.synchronous_mode = True
+        world.apply_settings(settings)
+
         ego_vehicle = None
         ego_cam = None
         ego_col = None
@@ -82,7 +87,8 @@ def main():
         cam_bp.set_attribute("image_size_x",str(120))
         cam_bp.set_attribute("image_size_y",str(120))
         cam_bp.set_attribute("fov",str(105))
-        cam_location = carla.Location(z=2.5)
+        cam_bp.set_attribute("sensor_tick",str(1))
+        cam_location = carla.Location(x=1.0, z=2.5)
         cam_transform = carla.Transform(cam_location)
         ego_cam = world.spawn_actor(cam_bp,cam_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
         ego_cam.listen(lambda image: image.save_to_disk('~/tutorial/output/%.6d.jpg' % image.frame))
@@ -90,7 +96,6 @@ def main():
         # --------------
         # Add collision sensor to ego vehicle.
         # --------------
-        """
         col_bp = world.get_blueprint_library().find('sensor.other.collision')
         col_location = carla.Location(0,0,0)
         col_rotation = carla.Rotation(0,0,0)
@@ -99,12 +104,10 @@ def main():
         def col_callback(colli):
             print("Collision detected:\n"+str(colli)+'\n')
         ego_col.listen(lambda colli: col_callback(colli))
-        """
 
         # --------------
         # Add Lane invasion sensor to ego vehicle.
         # --------------
-        """
         lane_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
         lane_location = carla.Location(0,0,0)
         lane_rotation = carla.Rotation(0,0,0)
@@ -113,14 +116,13 @@ def main():
         def lane_callback(lane):
             print("Lane invasion detected:\n"+str(lane)+'\n')
         ego_lane.listen(lambda lane: lane_callback(lane))
-        """
 
         # --------------
         # Add Obstacle sensor to ego vehicle.
         # --------------
-        """
         obs_bp = world.get_blueprint_library().find('sensor.other.obstacle')
-        obs_bp.set_attribute("only_dynamics",str(True))
+        obs_bp.set_attribute("only_dynamics",str(False))
+        obs_bp.set_attribute("sensor_tick",str(1))
         obs_location = carla.Location(0,0,0)
         obs_rotation = carla.Rotation(0,0,0)
         obs_transform = carla.Transform(obs_location,obs_rotation)
@@ -128,7 +130,6 @@ def main():
         def obs_callback(obs):
             print("Obstacle detected:\n"+str(obs)+'\n')
         ego_obs.listen(lambda obs: obs_callback(obs))
-        """
 
         # --------------
         # Add GNSS sensor to ego vehicle.
@@ -178,7 +179,8 @@ def main():
         # Game loop. Prevents the script from finishing.
         # --------------
         while True:
-            world_snapshot = world.wait_for_tick()
+            #world_snapshot = world.wait_for_tick()
+            world.tick()
 
     finally:
         # --------------
