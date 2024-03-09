@@ -18,6 +18,39 @@ import argparse
 import logging
 import random
 
+# semantic segmentation semantic_tags
+{
+    0: "Unlabeled",
+    1: "Roads",
+    2: "SideWalks",
+    3: "Building",
+    4: "Wall",
+    5: "Fence",
+    6: "Pole",
+    7: "TrafficLight",
+    8: "TrafficSign",
+    9: "Vegetation",
+    10: "Terrain",
+    11: "Sky",
+    12: "Pedestrian",
+    13: "Rider",
+    14: "Car",
+    15: "Truck",
+    16: "Bus",
+    17: "Train",
+    18: "Motorcycle",
+    19: "Bicycle",
+    20: "Static",
+    21: "Dynamic",
+    22: "Other",
+    23: "Water",
+    24: "RoadLine",
+    25: "Ground",
+    26: "Bridge",
+    27: "RailTrack",
+    28: "GuardRail"
+}
+
 # Ensure the output directory exists
 output_dir = 'output'
 os.makedirs(output_dir, exist_ok=True)
@@ -71,13 +104,15 @@ def process_camera_data(image, ego_vehicle):
     angle = round(map_to_steering_angle(steering),4)
 
     # Generate hazard response
-
+    # TODO: list objects in scene with ss tags
 
     # Generate gpt response for potential hazard
     if latest_obstacle_data == {}:
         hazard_response = "No obstacles detected."
     else:
-        obstacle = latest_obstacle_data['other_actor']
+        obstacle_ss_tags = latest_obstacle_data['other_actor'].semantic_tags
+        print(obstacle_ss_tags)
+        obstacle = latest_obstacle_data['other_actor'].type_id
         distance = round(latest_obstacle_data['distance'], 4)
 
         hazard_response = "The following obstaclces could be threatful:"
@@ -115,7 +150,7 @@ def obstacle_callback(data):
     global latest_obstacle_data
     latest_obstacle_data = {
         'distance': data.distance,
-        'other_actor': data.other_actor.type_id,
+        'other_actor': data.other_actor,
     }
 
 # Main data collection function
