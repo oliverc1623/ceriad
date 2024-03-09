@@ -22,8 +22,8 @@ import numpy as np
 # semantic segmentation semantic_tags
 ss_tag_id_map = {
     0: "Unlabeled",
-    1: "Roads",
-    2: "SideWalks",
+    1: "Road",
+    2: "SideWalk",
     3: "Building",
     4: "Wall",
     5: "Fence",
@@ -115,11 +115,8 @@ def process_camera_data(image, ego_vehicle):
     else:
         obstacle_ss_tag_id = latest_obstacle_data['other_actor'].semantic_tags
         ss_tag = ss_tag_id_map[obstacle_ss_tag_id[0]]
-        obstacle = latest_obstacle_data['other_actor'].type_id
         distance = round(latest_obstacle_data['distance'], 4)
-
         hazard_response = "The following obstaclces could be threatful:"
-        formatted_obstacle = format_string(obstacle)
         hazard_response += f" a {ss_tag} is {distance} meters away."
 
     conversations = [
@@ -248,7 +245,6 @@ def collect_data():
     camera_bp.set_attribute('fov', '90')
     camera_bp.set_attribute('sensor_tick','0.25')
     obstacle_bp.set_attribute('only_dynamics','True')
-    ss_bp.set_attribute('sensor_tick', '0.25')
 
     # Collect data for a certain amount of time
     try:
@@ -265,31 +261,30 @@ def collect_data():
         number_of_spawn_points = len(spawn_points)
 
         # Uncomment if using a random world
-
-        #if 0 < number_of_spawn_points:
-            #random.shuffle(spawn_points)
-            #ego_transform = spawn_points[0]
-            #ego_vehicle = world.spawn_actor(ego_bp,ego_transform)
-            #print('\nEgo is spawned')
-        #else:
-            #logging.warning('Could not found any spawn points')
+        if 0 < number_of_spawn_points:
+            random.shuffle(spawn_points)
+            ego_transform = spawn_points[0]
+            ego_vehicle = world.spawn_actor(ego_bp,ego_transform)
+            print('\nEgo is spawned')
+        else:
+            logging.warning('Could not found any spawn points')
 
         # Get the ego vehicle in a scenario world
-        ego_vehicle = None
-        while ego_vehicle is None:
-            print("Waiting for the ego vehicle...")
-            time.sleep(1)
-            possible_vehicles = world.get_actors().filter('vehicle.*')
-            for vehicle in possible_vehicles:
-                if vehicle.attributes['role_name'] == 'hero':
-                    print("Ego vehicle found")
-                    ego_vehicle = vehicle
-                    break
+        #ego_vehicle = None
+        #while ego_vehicle is None:
+            #print("Waiting for the ego vehicle...")
+            #time.sleep(1)
+            #possible_vehicles = world.get_actors().filter('vehicle.*')
+            #for vehicle in possible_vehicles:
+                #if vehicle.attributes['role_name'] == 'hero':
+                    #print("Ego vehicle found")
+                    #ego_vehicle = vehicle
+                    #break
 
         # Spawn sensors and attach to vehicle
-        camera = world.spawn_actor(camera_bp, carla.Transform(carla.Location(x=1.5, z=2.4)), attach_to=ego_vehicle)
+        camera = world.spawn_actor(camera_bp, carla.Transform(carla.Location(x=1.5, z=2.0)), attach_to=ego_vehicle)
         obstacle_detector = world.spawn_actor(obstacle_bp, carla.Transform(), attach_to=ego_vehicle)
-        ss_camera = world.spawn_actor(ss_bp, carla.Transform(carla.Location(x=1.5, z=2.4)),attach_to=ego_vehicle)
+        ss_camera = world.spawn_actor(ss_bp, carla.Transform(carla.Location(x=1.5, z=2.0)),attach_to=ego_vehicle)
 
         # Define callbacks
         camera.listen(lambda image: process_camera_data(image, ego_vehicle))
@@ -308,7 +303,6 @@ def collect_data():
         # --------------
         while True:
             world_snapshot = world.wait_for_tick()
-
             # --------------
             # Place spectator on ego spawning
             # --------------
