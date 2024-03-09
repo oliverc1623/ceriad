@@ -19,7 +19,7 @@ import logging
 import random
 
 # semantic segmentation semantic_tags
-{
+ss_tag_id_map = {
     0: "Unlabeled",
     1: "Roads",
     2: "SideWalks",
@@ -110,14 +110,14 @@ def process_camera_data(image, ego_vehicle):
     if latest_obstacle_data == {}:
         hazard_response = "No obstacles detected."
     else:
-        obstacle_ss_tags = latest_obstacle_data['other_actor'].semantic_tags
-        print(obstacle_ss_tags)
+        obstacle_ss_tag_id = latest_obstacle_data['other_actor'].semantic_tags
+        ss_tag = ss_tag_id_map[obstacle_ss_tag_id[0]]
         obstacle = latest_obstacle_data['other_actor'].type_id
         distance = round(latest_obstacle_data['distance'], 4)
 
         hazard_response = "The following obstaclces could be threatful:"
         formatted_obstacle = format_string(obstacle)
-        hazard_response += f" {formatted_obstacle} is {distance} meters away."
+        hazard_response += f" a {ss_tag} is {distance} meters away."
 
     conversations = [
         {
