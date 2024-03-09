@@ -17,6 +17,7 @@ import carla
 import argparse
 import logging
 import random
+import numpy as np
 
 # semantic segmentation semantic_tags
 ss_tag_id_map = {
@@ -63,8 +64,9 @@ data_file_path = f'{output_dir}/data_{timestamp}.json'
 with open(data_file_path, 'a') as data_file:
     data_file.write('[')  # Start of JSON array
 
-# Global variable to hold the latest obstacle detection data
+# Global variable to hold the latest data from sensors other than rgb camera
 latest_obstacle_data = {}
+latest_ss_image = {}
 
 # Function to append data to the JSON file
 def append_data_to_json(data):
@@ -93,6 +95,7 @@ def format_string(s):
 # Function to process camera data and include obstacle data
 def process_camera_data(image, ego_vehicle):
     global latest_obstacle_data
+    global latest_ss_image
     image_path = f'{output_dir}/{image.frame}.png'
     image.save_to_disk(image_path)
 
@@ -104,7 +107,7 @@ def process_camera_data(image, ego_vehicle):
     angle = round(map_to_steering_angle(steering),4)
 
     # Generate hazard response
-    # TODO: list objects in scene with ss tags
+    perception_response = latest_ss_image['seen_objects']
 
     # Generate gpt response for potential hazard
     if latest_obstacle_data == {}:
@@ -126,7 +129,7 @@ def process_camera_data(image, ego_vehicle):
         },
         {
             'from': 'gpt',
-            'value': "place holder"
+            'value': perception_response
         },
         {
             'from': 'human',
@@ -153,6 +156,79 @@ def obstacle_callback(data):
         'other_actor': data.other_actor,
     }
 
+# Callback function for ss camera
+def ss_callback(ss_image):
+    global latest_ss_image
+    image_data = np.frombuffer(ss_image.raw_data, dtype=np.dtype("uint8"))
+    image_data = np.reshape(image_data, (ss_image.height, ss_image.width, 4))  # RGBA format
+    # The object class is encoded in the red channel.
+    semantic_image = image_data[:, :, 2]  # Using the red channel for class information
+
+    num_none = np.sum(semantic_image == 0)
+    num_roads = np.sum(semantic_image == 1)
+    num_sidewalk = np.sum(semantic_image == 2)
+    num_building = np.sum(semantic_image == 3)
+    num_wall = np.sum(semantic_image == 4)
+    num_fence = np.sum(semantic_image == 5)
+    num_pole = np.sum(semantic_image == 6)
+    num_trafficlight = np.sum(semantic_image == 7)
+    num_trafficsign = np.sum(semantic_image == 8)
+    num_vegetation = np.sum(semantic_image == 9)
+    num_terrian = np.sum(semantic_image == 10)
+    num_sky = np.sum(semantic_image == 11)
+    num_pedestrian = np.sum(semantic_image == 12)
+    num_rider = np.sum(semantic_image == 13)
+    num_car = np.sum(semantic_image == 14)
+    num_truck = np.sum(semantic_image == 15)
+    num_bus = np.sum(semantic_image == 16)
+    num_train = np.sum(semantic_image == 17)
+    num_motorcycle = np.sum(semantic_image == 18)
+    num_bicycle = np.sum(semantic_image == 19)
+    num_static = np.sum(semantic_image == 20)
+    num_dynamic = np.sum(semantic_image == 21)
+    num_other = np.sum(semantic_image == 22)
+    num_water = np.sum(semantic_image == 23)
+    num_RoadLine = np.sum(semantic_image == 24)
+    num_Ground = np.sum(semantic_image == 25)
+    num_bridge = np.sum(semantic_image == 26)
+    num_railtrack = np.sum(semantic_image == 27)
+    num_guardrail = np.sum(semantic_image == 28)
+
+    objects = {
+        "None": num_none,
+        "Road": num_roads,
+        "Sidewalk": num_sidewalk,
+        "Building": num_building,
+        "Wall": num_wall,
+        "Fence": num_fence,
+        "Pole": num_pole,
+        "Traffic light": num_trafficlight,
+        "Traffic sign": num_trafficsign,
+        "Terrian": num_terrian,
+        "Pedestrian": num_pedestrian,
+        "Rider": num_rider,
+        "Car": num_car,
+        "Truck": num_truck,
+        "Bus": num_bus,
+        "Train": num_train,
+        "Motorcycle": num_motorcycle,
+        "Bicycle": num_bicycle,
+        "Static": num_static,
+        "Dynamic": num_dynamic,
+        "Water": num_water,
+        "Roadline": num_RoadLine,
+        "Ground": num_Ground,
+        "Bridge": num_bridge,
+        "Rail track": num_railtrack,
+        "Gaurdrail": num_guardrail
+    }
+
+    filtered_values = {k: v for k, v in objects.items() if v > 500}
+
+    latest_ss_image = {
+        'seen_objects': ", ".join([f"{k}" for k, v in filtered_values.items()])
+    }
+
 # Main data collection function
 def collect_data():
     # Initialize client and world
@@ -164,6 +240,7 @@ def collect_data():
     blueprint_library = world.get_blueprint_library()
     camera_bp = blueprint_library.find('sensor.camera.rgb')
     obstacle_bp = blueprint_library.find('sensor.other.obstacle')
+    ss_bp = world.get_blueprint_library().find('sensor.camera.semantic_segmentation')
 
     # Adjust sensor settings if necessary
     camera_bp.set_attribute('image_size_x', '120')
@@ -171,6 +248,7 @@ def collect_data():
     camera_bp.set_attribute('fov', '90')
     camera_bp.set_attribute('sensor_tick','0.25')
     obstacle_bp.set_attribute('only_dynamics','True')
+    ss_bp.set_attribute('sensor_tick', '0.25')
 
     # Collect data for a certain amount of time
     try:
@@ -186,6 +264,8 @@ def collect_data():
         spawn_points = world.get_map().get_spawn_points()
         number_of_spawn_points = len(spawn_points)
 
+        # Uncomment if using a random world
+
         #if 0 < number_of_spawn_points:
             #random.shuffle(spawn_points)
             #ego_transform = spawn_points[0]
@@ -194,8 +274,8 @@ def collect_data():
         #else:
             #logging.warning('Could not found any spawn points')
 
+        # Get the ego vehicle in a scenario world
         ego_vehicle = None
-        # Get the ego vehicle
         while ego_vehicle is None:
             print("Waiting for the ego vehicle...")
             time.sleep(1)
@@ -209,10 +289,12 @@ def collect_data():
         # Spawn sensors and attach to vehicle
         camera = world.spawn_actor(camera_bp, carla.Transform(carla.Location(x=1.5, z=2.4)), attach_to=ego_vehicle)
         obstacle_detector = world.spawn_actor(obstacle_bp, carla.Transform(), attach_to=ego_vehicle)
+        ss_camera = world.spawn_actor(ss_bp, carla.Transform(carla.Location(x=1.5, z=2.4)),attach_to=ego_vehicle)
 
         # Define callbacks
         camera.listen(lambda image: process_camera_data(image, ego_vehicle))
         obstacle_detector.listen(obstacle_callback)
+        ss_camera.listen(ss_callback)
         # --------------
         # Place spectator on ego spawning
         # --------------
