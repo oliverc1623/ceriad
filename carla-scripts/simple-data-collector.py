@@ -18,6 +18,7 @@ import argparse
 import logging
 import random
 import numpy as np
+import math
 
 # semantic segmentation semantic_tags
 ss_tag_id_map = {
@@ -92,26 +93,60 @@ def format_string(s):
     print(s)
     return s.split('.')[1].replace('_', ' ')
 
+def calculate_distance(location1, location2):
+    """
+    Calculate the Euclidean distance between two locations.
+    """
+    return math.sqrt((location1.x - location2.x)**2 + (location1.y - location2.y)**2 + (location1.z - location2.z)**2)
+
+def describe_nearby_vehicles(nearby_vehicles):
+    descriptions = [f"There is a vehicle {distance:.2f} meters away" for distance in nearby_vehicles.values()]
+
+    # Join all descriptions into a single string
+    description_str = ". ".join(descriptions) + "."
+
+    if nearby_vehicles == {}:
+        return ""
+    else:
+        return description_str
+
 # Function to process camera data and include obstacle data
-def process_camera_data(image, ego_vehicle):
+def process_camera_data(image, ego_vehicle, world):
     global latest_obstacle_data
-    global latest_ss_image
-    image_path = f'{output_dir}/{image.frame}.png'
+    image_path = f'{output_dir}/{image.frame}.jpg'
     image.save_to_disk(image_path)
 
     # get ego vehicle metrics
     ego_vehicle_control = ego_vehicle.get_control()
+    ego_location = ego_vehicle.get_location()
     throttle = ego_vehicle_control.throttle
     steering = ego_vehicle_control.steer
     mph = round(map_to_mph(throttle),4)
     angle = round(map_to_steering_angle(steering),4)
 
-    # Generate hazard response
-    perception_response = latest_ss_image['seen_objects']
+    vicinity_threshold = 50.0  # Define the vicinity radius in meters
+    nearby_vehicles = {}
+    vehicles = world.get_actors().filter('vehicle.*')
+
+    for vehicle in vehicles:
+        if vehicle.id != ego_vehicle.id:  # Avoid calculating distance to itself
+            vehicle_location = vehicle.get_location()
+            distance = calculate_distance(ego_location, vehicle_location)
+
+            forward_vec = ego_vehicle.get_transform().get_forward_vector()
+            ray = vehicle.get_transform().location - ego_vehicle.get_transform().location
+
+            if forward_vec.dot(ray) > 1:
+                if distance <= vicinity_threshold:
+                    nearby_vehicles[vehicle.id] = distance
+
+    print(nearby_vehicles)
+    hazard_response = ""
+    hazard_response += describe_nearby_vehicles(nearby_vehicles)
 
     # Generate gpt response for potential hazard
     if latest_obstacle_data == {}:
-        hazard_response = "No obstacles detected."
+        hazard_response += " No direct obstacles detected."
     else:
         obstacle_ss_tag_id = latest_obstacle_data['other_actor'].semantic_tags
         ss_tag = ss_tag_id_map[obstacle_ss_tag_id[0]]
@@ -122,15 +157,7 @@ def process_camera_data(image, ego_vehicle):
     conversations = [
         {
             'from': 'human',
-            'value': f'<image>\nWhat are objects worth noting in the current scenario?',
-        },
-        {
-            'from': 'gpt',
-            'value': perception_response
-        },
-        {
-            'from': 'human',
-            'value': f'I am the driver driving at {mph} mph and steering at {angle} degrees. What are hazards in this driving scenario?',
+            'value': f'<image>\nI am the driver driving at {mph} mph and steering at {angle} degrees. What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?',
         },
         {
             'from': 'gpt',
@@ -144,8 +171,10 @@ def process_camera_data(image, ego_vehicle):
         'conversations': conversations
     }
     append_data_to_json(combined_data)
+    latest_obstacle_data = {}
 
 # Callback function for obstacle detector
+
 def obstacle_callback(data):
     global latest_obstacle_data
     latest_obstacle_data = {
@@ -243,12 +272,14 @@ def collect_data():
     camera_bp.set_attribute('image_size_x', '120')
     camera_bp.set_attribute('image_size_y', '120')
     camera_bp.set_attribute('fov', '90')
-    camera_bp.set_attribute('sensor_tick','0.25')
+    camera_bp.set_attribute('sensor_tick','1')
     obstacle_bp.set_attribute('only_dynamics','True')
+    obstacle_bp.set_attribute('distance', '5')
+    obstacle_bp.set_attribute('hit_radius','1.0')
 
     # Collect data for a certain amount of time
     try:
-        world.wait_for_tick(seconds=100)
+        world.wait_for_tick(seconds=60)
 
         ego_bp = world.get_blueprint_library().find('vehicle.tesla.model3')
         ego_bp.set_attribute('role_name','ego')
@@ -287,7 +318,7 @@ def collect_data():
         ss_camera = world.spawn_actor(ss_bp, carla.Transform(carla.Location(x=1.5, z=2.0)),attach_to=ego_vehicle)
 
         # Define callbacks
-        camera.listen(lambda image: process_camera_data(image, ego_vehicle))
+        camera.listen(lambda image: process_camera_data(image, ego_vehicle, world))
         obstacle_detector.listen(obstacle_callback)
         ss_camera.listen(ss_callback)
         # --------------
