@@ -24,20 +24,22 @@ def make_env(rank: int, seed: int = 0):
     return _init
 
 if __name__=="__main__":
-    # Parallel environments
-    num_cpu = 1
-    vec_env = CustomEnv(ego_vehicle='car1')
-    # SubprocVecEnv([make_env(i) for i in range(num_cpu)])
 
-    # Create log dir
-    log_dir = f"tmp/"
-    os.makedirs(log_dir, exist_ok=True)
-    vec_env = Monitor(vec_env, log_dir)
+    num_trials = 4
+    for i in range(num_trials):
+        print(f"Trial: {i}"
+        vec_env = CustomEnv(ego_vehicle='car1')
+        # SubprocVecEnv([make_env(i) for i in range(num_cpu)])
 
-    model = PPO("CnnPolicy",
-                vec_env,
-                verbose=1,
-                policy_kwargs=dict(normalize_images=False),
-                device="cuda:1")
-    model.learn(total_timesteps=100_000, progress_bar=True)
-    model.save("carla-lanefollow-empty")
+        # Create log dir
+        log_dir = f"tmp{i}/"
+        os.makedirs(log_dir, exist_ok=True)
+        vec_env = Monitor(vec_env, log_dir)
+
+        model = PPO("CnnPolicy",
+                    vec_env,
+                    verbose=1,
+                    policy_kwargs=dict(normalize_images=False),
+                    device="cuda:1")
+        model.learn(total_timesteps=100, progress_bar=True)
+        model.save(f"carla-lanefollow-empty_trial{i}")
