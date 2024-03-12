@@ -1,0 +1,310 @@
+[
+    {
+        "scenario_id": 0,
+        "image_filename": "scenario_0.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [295.8864435710648, 2.1015654411968586e-05]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [287.7765816670382, 11.983808704358182]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [319.51534868078625, 4.0]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [328.57628057098935, 8.000412331040199]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [367.09140490019973, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 1,
+        "image_filename": "scenario_1.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [285.08246880302903, 7.324677194170792]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [290.53386152504777, 4.000155499848812]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [314.5914137859283, 7.9996643946138635]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [348.58148856062985, 0.0001269367137761979]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [357.8586584296994, 11.999514722324884]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 2,
+        "image_filename": "scenario_2.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [285.38136581597075, 7.382244663327928]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [302.4689868098784, 0.0]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [332.41439264018356, 8.000070440323967]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [351.35198895210175, 0.22582697620826037]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [342.70820648612136, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 3,
+        "image_filename": "scenario_3.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [305.2895591938902, 8.592627626292836]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [290.51490106499205, 3.9947442107130007]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [314.3148376682543, 7.999915604075059]; Vehicle threat level: Yes. Vehicle: vehicle 3; Vehicle position: [346.43572516982243, 0.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [361.7653066393224, 4.0]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [379.33401373598474, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 4,
+        "image_filename": "scenario_4.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [285.9834407048222, 0.0004363205102628857]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [310.90477894624127, 4.0]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [312.19714019905575, 11.999776920738547]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [340.29404147496035, 8.000391133922292]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 5,
+        "image_filename": "scenario_5.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [285.94504138116, 0.0]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [306.1505451453947, 8.0]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [318.4954816165168, 0.0]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [342.4604300738737, 3.9999266456936895]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 6,
+        "image_filename": "scenario_6.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [271.99363658594825, 6.3950264980573355]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [277.1057965999395, 7.6416984057720745]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [326.5298621084642, 0.00010009521685561068]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 7,
+        "image_filename": "scenario_7.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [278.4903106379628, 7.995892571729103]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [283.4905360838151, 7.999758165892277]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [320.8377077088306, 7.66089987540803]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [339.30027299159184, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 8,
+        "image_filename": "scenario_8.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [295.66861977369007, 0.0]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [301.9693096836835, 11.999921694043225]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [314.0363752413317, 4.000904875559794]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [348.7367979093636, 8.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 9,
+        "image_filename": "scenario_9.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [305.36137199249214, 8.0]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [305.27013949210385, 4.0]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [319.00379880743674, 11.999853359623085]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [354.4398403436494, 8.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [359.38359467718425, 0.00011290215277517685]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [376.5256296039765, 3.9997557064517126]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 10,
+        "image_filename": "scenario_10.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [301.3788447268563, 4.0]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [310.3283602175955, 12.0]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [328.9668457120354, 4.0]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [334.88188901940265, 8.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [374.06124980188486, 0.00010476217896291766]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [376.2642227217128, 8.000279473370226]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 11,
+        "image_filename": "scenario_11.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [312.5425911238474, 11.967066783166695]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [289.14317430625584, 3.999860647366133]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [322.2305497841656, 0.00045271098877270607]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [357.5333129704917, 4.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [358.62356269793963, 11.999550787913641]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [385.3691735304401, 8.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 12,
+        "image_filename": "scenario_12.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [316.2504325709031, 0.04666545993098453]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [302.0763854980758, 11.999867769837653]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [335.2971484640255, 8.0]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [347.7039652949182, 4.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [376.86656123512677, 0.0]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [368.1095425958697, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 13,
+        "image_filename": "scenario_13.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [279.4002251007333, 0.00584504611573133]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [295.8166144167778, 3.999327762299042]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [325.55157097972887, 12.0]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [340.1919528745305, 0.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [347.2035208931915, 7.999180893165087]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 14,
+        "image_filename": "scenario_14.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [323.93262946613044, 4.001304590971248]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [315.86241140436135, 11.99967016303261]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [310.8477954513841, 0.0009931646002073163]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [330.5731256865523, 7.952283170959559]; Vehicle threat level: Yes. Vehicle: vehicle 4; Vehicle position: [363.69213199397814, 0.0]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [373.78033544105796, 4.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 15,
+        "image_filename": "scenario_15.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [288.8903971986614, 4.064433173977303]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [313.7868622222443, 6.723878014710475]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [311.56988689691, 11.743199020711472]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [351.23134514837244, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 16,
+        "image_filename": "scenario_16.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [291.9432713439848, 7.381236797496092]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [305.69595719391066, 11.999912993823806]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [328.48246330995613, 0.0]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [344.93973610086084, 4.46228455192066]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 17,
+        "image_filename": "scenario_17.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [298.07153330809143, 4.002405299553228]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [297.4613282165142, 8.087408825637352]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [333.80804186867135, 0.001085257809341215]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [349.03592230189105, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 18,
+        "image_filename": "scenario_18.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [303.26701114236124, 7.995438892784031]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [312.4633026711155, 12.0]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [331.59142503736575, 4.000066651600816]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [350.92517770162834, 8.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [371.95127581066356, 0.00018464581373689017]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [376.6917561588572, 12.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 19,
+        "image_filename": "scenario_19.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [283.3429978194951, 11.999341377546784]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [301.9303443227925, 0.0]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [333.4254408914485, 11.999956623454972]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [342.58311800523614, 4.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 20,
+        "image_filename": "scenario_20.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [295.8806354897961, 0.0005429496640192126]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [314.1183013818821, 8.0]; Vehicle threat level: No. Vehicle: vehicle 2; Vehicle position: [319.96835528293536, 3.992221893418771]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [347.75427898785756, 12.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [355.34239924606106, 0.0]; Vehicle threat level: No. "
+            }
+        ]
+    },
+    {
+        "scenario_id": 21,
+        "image_filename": "scenario_21.png",
+        "conversations": [
+            {
+                "from": "human",
+                "value": "What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving?"
+            },
+            {
+                "from": "gpt",
+                "value": "Vehicle: ego vehicle; Vehicle position: [297.43341547019986, 7.381915099675486]; Vehicle threat level: None. Vehicle: vehicle 1; Vehicle position: [302.93110900973596, 11.999907941767113]; Vehicle threat level: Yes. Vehicle: vehicle 2; Vehicle position: [319.720357315098, 0.1269489429962288]; Vehicle threat level: No. Vehicle: vehicle 3; Vehicle position: [347.88906745962856, 8.0]; Vehicle threat level: No. Vehicle: vehicle 4; Vehicle position: [369.0459698621098, 0.0]; Vehicle threat level: No. Vehicle: vehicle 5; Vehicle position: [371.79452426792403, 4.0]; Vehicle threat level: No. "
+            }
+        ]
+    }
+]
