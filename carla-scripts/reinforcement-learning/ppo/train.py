@@ -27,7 +27,7 @@ if __name__=="__main__":
 
     num_trials = 4
     for i in range(num_trials):
-        print(f"Trial: {i}"
+        print(f"Trial: {i}")
         vec_env = CustomEnv(ego_vehicle='car1')
         # SubprocVecEnv([make_env(i) for i in range(num_cpu)])
 
