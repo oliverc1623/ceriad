@@ -94,7 +94,7 @@ class CustomEnv(gym.Env):
         self.action_space = spaces.Box(-1.0, 1.0, (2,), np.float32)
         self.observation_space = spaces.Dict({
             'image': spaces.Box(low=0,high=255,
-                                 shape=(1,160,168),dtype=np.unit8),
+                                 shape=(1,160,168),dtype=np.uint8),
             'throttle': spaces.Box(low=-1.0,high=1.0, 
                                  shape=(1,),dtype=np.float32),
             'steer': spaces.Box(low=-1.0,high=1.0, 
@@ -102,7 +102,7 @@ class CustomEnv(gym.Env):
             'prev_steer': spaces.Box(low=-1.0,high=1.0, 
                                  shape=(1,),dtype=np.float32),
         })
-        self.prev_steer = 0.0
+        self.prev_steer = np.array([0.0],dtype=np.float32)
         self.env = FollowLeadingVehicle()
         self.done = {"__all__": False}
 
@@ -114,11 +114,11 @@ class CustomEnv(gym.Env):
         grayscale = np.expand_dims(grayscale, 0)
         obs = {
             'image': grayscale,
-            'throttle': action[0],
-            'steer': action[1],
-            'prev_steer': self.prev_steer
+            'throttle': np.array([action[0]],dtype=np.float32),
+            'steer': np.array([action[1]],dtype=np.float32),
+            'prev_steer': self.prev_steer,
         }
-        self.prev_steer = action[1]
+        self.prev_steer[0]=action[1]
         reward = reward[self.ego_vehicle]
         done = done[self.ego_vehicle]
         truncated = False
@@ -131,10 +131,10 @@ class CustomEnv(gym.Env):
         grayscale = (rgb2gray(observation) * 255).astype(np.uint8)
         grayscale = np.expand_dims(grayscale, 0)
         obs['image'] = grayscale
-        obs['throttle'] = 0.0
-        obs['steer'] = 0.0
-        obs['prev_steer'] = 0.0
-        self.prev_steer=0.0
+        obs['throttle'] = np.array([0.0],dtype=np.float32)
+        obs['steer'] = np.array([0.0],dtype=np.float32)
+        obs['prev_steer'] = np.array([0.0],dtype=np.float32)
+        self.prev_steer=np.array([0.0],dtype=np.float32)
         info = {}
         return obs, info
 
