@@ -37,11 +37,11 @@ if __name__=="__main__":
         os.makedirs(log_dir, exist_ok=True)
         vec_env = Monitor(vec_env, log_dir)
 
-        model = PPO("CnnPolicy",
+        model = PPO("MultiInputPolicy",
                     vec_env,
                     verbose=1,
                     policy_kwargs=dict(activation_fn=torch.nn.ReLU,
-                                       net_arch=[64, 64],),
+                                       net_arch=[500, 300, 100],),
                     device="cuda:1")
         model.learn(total_timesteps=500_000, progress_bar=True)
         model.save(f"carla-lanefollow-empty_trial{i}")
