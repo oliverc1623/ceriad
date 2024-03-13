@@ -1,3 +1,6 @@
 [submodule "highwayenv-source"]
 	path = highwayenv-source
 	url = https://github.com/Farama-Foundation/HighwayEnv
+[submodule "carla-scripts/reinforcement-learning/carla-scripts/reinforcement-learning/macad-gym/macad-gym"]
+	path = carla-scripts/reinforcement-learning/carla-scripts/reinforcement-learning/macad-gym/macad-gym
+	url = https://github.com/praveen-palanisamy/macad-gym.git
