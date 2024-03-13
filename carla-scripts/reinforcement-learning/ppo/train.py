@@ -26,10 +26,11 @@ def make_env(rank: int, seed: int = 0):
 if __name__=="__main__":
 
     num_trials = 4
+    num_cpu = 2
     for i in range(num_trials):
         print(f"Trial: {i}")
         vec_env = CustomEnv(ego_vehicle='car1')
-        # SubprocVecEnv([make_env(i) for i in range(num_cpu)])
+        #vec_env = SubprocVecEnv([make_env(i) for i in range(num_cpu)])
 
         # Create log dir
         log_dir = f"tmp{i}/"
@@ -39,7 +40,8 @@ if __name__=="__main__":
         model = PPO("CnnPolicy",
                     vec_env,
                     verbose=1,
-                    policy_kwargs=dict(normalize_images=False),
+                    policy_kwargs=dict(activation_fn=torch.nn.ReLU,
+                                       net_arch=[64, 64],),
                     device="cuda:1")
-        model.learn(total_timesteps=100, progress_bar=True)
+        model.learn(total_timesteps=500_000, progress_bar=True)
         model.save(f"carla-lanefollow-empty_trial{i}")
