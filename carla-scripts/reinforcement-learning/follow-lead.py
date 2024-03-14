@@ -44,7 +44,7 @@ configs = {
         "use_depth_camera": False,
         "send_measurements": False,
         "enable_planner": True,
-        "spectator_loc": [70, -125, 9],
+        "spectator_loc": [107, 133, 0.5],
         "sync_server": True,
         "fixed_delta_seconds": 0.05,
     },
