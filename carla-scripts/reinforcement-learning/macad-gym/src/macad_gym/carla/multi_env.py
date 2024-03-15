@@ -295,7 +295,7 @@ class MultiCarlaEnv(*MultiAgentEnvBases):
 
         # Camera position is problematic for certain vehicles and even in
         # autopilot they are prone to error
-        self.exclude_hard_vehicles = False
+        self.exclude_hard_vehicles = True
         # list of str: Supported values for `type` filed in `actor_configs`
         # for actors than can be actively controlled
         self._supported_active_actor_types = [
@@ -803,6 +803,7 @@ class MultiCarlaEnv(*MultiAgentEnvBases):
                             or x.id.endswith("sprinter")
                             or x.id.endswith("firetruck")
                             or x.id.endswith("ambulance")
+                            or x.id.endswith("fusorosa")
                         ),
                         blueprints,
                     )
