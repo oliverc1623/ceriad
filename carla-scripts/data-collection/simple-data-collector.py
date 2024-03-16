@@ -255,6 +255,49 @@ def ss_callback(ss_image):
         'seen_objects': ", ".join([f"{k}" for k, v in filtered_values.items()])
     }
 
+# Spawn spectator camera
+def calculate_spectator_transform(vehicle_transform, offset=(-10, 0, 5), rotation_offset=(0, 0, 0)):
+    """
+    Calculate the spectator transform based on the vehicle transform.
+    
+    :param vehicle_transform: The transform of the vehicle.
+    :param offset: A tuple of (x, y, z) offsets relative to the vehicle.
+    :param rotation_offset: A tuple of (pitch, yaw, roll) rotation offsets.
+    :return: The calculated transform for the spectator.
+    """
+    # Extract the vehicle location and rotation
+    vehicle_location = vehicle_transform.location
+    vehicle_rotation = vehicle_transform.rotation
+    
+    # Convert the vehicle rotation to radians
+    pitch_rad = math.radians(vehicle_rotation.pitch)
+    yaw_rad = math.radians(vehicle_rotation.yaw)
+    roll_rad = math.radians(vehicle_rotation.roll)
+    
+    # Calculate the forward vector
+    cos_pitch, cos_yaw = math.cos(pitch_rad), math.cos(yaw_rad)
+    sin_pitch, sin_yaw = math.sin(pitch_rad), math.sin(yaw_rad)
+    fwd_vector = carla.Vector3D(x=cos_pitch * cos_yaw, y=cos_pitch * sin_yaw, z=sin_pitch)
+    
+    # Calculate the new location using the forward vector
+    offset_location = carla.Location(
+        x=vehicle_location.x + offset[0] * fwd_vector.x,
+        y=vehicle_location.y + offset[0] * fwd_vector.y,
+        z=vehicle_location.z + offset[2]
+    )
+    
+    # Apply rotation offset to the vehicle rotation
+    spectator_rotation = carla.Rotation(
+        pitch=vehicle_rotation.pitch + rotation_offset[0],
+        yaw=vehicle_rotation.yaw + rotation_offset[1],
+        roll=vehicle_rotation.roll + rotation_offset[2]
+    )
+    
+    # Create the spectator transform
+    spectator_transform = carla.Transform(offset_location, spectator_rotation)
+    
+    return spectator_transform
+
 # Main data collection function
 def collect_data():
     # Initialize client and world
@@ -324,8 +367,12 @@ def collect_data():
         # --------------
         # Place spectator on ego spawning
         # --------------
+        # Get the ego vehicle's transform
+        spectator_transform = calculate_spectator_transform(ego_vehicle.get_transform(),
+                                                           offset=(-6, 0, 2.5), 
+                                                            rotation_offset=(-10, 0, 0))
         spectator = world.get_spectator()
-        spectator.set_transform(ego_vehicle.get_transform())
+        spectator.set_transform(spectator_transform)
 
         ego_vehicle.set_autopilot(True, 5000)
 
@@ -338,12 +385,34 @@ def collect_data():
             # Place spectator on ego spawning
             # --------------
             spectator = world.get_spectator()
-            spectator.set_transform(ego_vehicle.get_transform())
+            spectator_transform = calculate_spectator_transform(ego_vehicle.get_transform(),
+                                                           offset=(-6, 0, 2.5), 
+                                                            rotation_offset=(-10, 0, 0))
+            spectator.set_transform(spectator_transform)
 
     finally:
         # Finalize JSON file
         finalize_json_file()
         print(f'Data saved to {data_file_path}')
+        client.stop_recorder()
+        if ego_vehicle is not None:
+            if camera is not None:
+                camera.stop()
+                camera.destroy()
+            # if ego_col is not None:
+            #     ego_col.stop()
+            #     ego_col.destroy()
+            # if ego_lane is not None:
+            #     ego_lane.stop()
+            #     ego_lane.destroy()
+            if obstacle_detector is not None:
+                obstacle_detector.stop()
+                obstacle_detector.destroy()
+            if ss_camera is not None:
+                ss_camera.stop()
+                ss_camera.destroy()
+  
+            ego_vehicle.destroy()
 
 if __name__ == '__main__':
     collect_data()
