@@ -67,7 +67,7 @@ selectAction("There is a motocycle directly in front of me that appears to be st
 
 # ## Reporter
 
-# In[6]:
+# In[5]:
 
 
 from llava.model.builder import load_pretrained_model
@@ -75,10 +75,10 @@ from llava.mm_utils import get_model_name_from_path
 from llava.eval.run_llava import eval_model
 
 
-# In[7]:
+# In[8]:
 
 
-vec_env = CustomEnv(ego_vehicle='car1')
+vec_env = HardEnv(ego_vehicle='car1')
 obs, info = vec_env.reset()
 
 plt.imsave("basic.jpg", obs['image'][0],cmap='gray')
@@ -105,10 +105,10 @@ args = type('Args', (), {
 eval_model(args)
 
 
-# In[18]:
+# In[12]:
 
 
-report = "There is a vehicle 49.37 meters away. There is a vehicle 49.96 meters away. There is a vehicle 45.87 meters away. There is a vehicle 49.41 meters away. There is a vehicle 45.43 meters away. There is a vehicle 49.61 meters away. There is a vehicle 45.33 meters away. There is a vehicle 49.99 meters away. There is a vehicle 45.30 meters away. There is a vehicle 49.71 meters away. There is a vehicle 45.87 meters away. There is a vehicle 49.33 meters away. There is a vehicle 45.29 meters away. There is a vehicle 49.83 meters away. There is a vehicle 45.41 meters away. There is a vehicle 49.47 meters away. There is a vehicle 45.08 meters away. There is a vehicle 49.69 meters away. There is a vehicle 45.17 meters away. There is a vehicle 49.30 meters away. There is a vehicle 45.61 meters away. There is a vehicle 49.93 meters away. There is a vehicle 45.51 meters away. There is a vehicle 49.87 meters away. There is a vehicle 45.25 meters away. There is a vehicle 49.53 meters away. There is a vehicle 45.04 meters away. There is a vehicle 49.37 meters away. There is a vehicle 45.83 meters away. There is a vehicle 49.99 meters away. There is a vehicle 45.40 meters away. There is a vehicle 49.63 meters away. There is a vehicle 45.32 meters away. There is a vehicle 49.83 meters away. There is a vehicle 45.13 meters away. There is a vehicle 49.42 meters away. There is a vehicle 45.91 meters away. There is a vehicle 49.33 meters away. There is a vehicle 45.59 meters away. There is a vehicle"
+report = "There is a vehicle 49.37 meters away. There is a vehicle 49.87 meters away. There is a vehicle 49.33 meters away. There is a vehicle 49.41 meters away. There is a vehicle 49.91 meters away. There is a vehicle 49.71 meters away. There is a vehicle 49.39 meters away. There is a vehicle 49.85 meters away. There is a vehicle 49.45 meters away. There is a vehicle 49.30 meters away. There is a vehicle 49.96 meters away. There is a vehicle 49.57 meters away. There is a vehicle 49.41 meters away. There is a vehicle 49.83 meters away. There is a vehicle 49.35 meters away. There is a vehicle 49.53 meters away. There is a vehicle 49.99 meters away. There is a vehicle 49.61 meters away. There is a vehicle 49.49 meters away. There is a vehicle 49.89 meters away. There is a vehicle 49.32 meters away. There is a vehicle 49.59 meters away. There is a vehicle 49.94 meters away. There is a vehicle 49.66 meters away. There is a vehicle 49.43 meters away. There is a vehicle 49.86 meters away. There is a vehicle 49.38 meters away. There is a vehicle 49.99 meters away. There is a vehicle 49.61 meters away. There is a vehicle 49.53 meters away. There is a vehicle 49.49 meters away. There is a vehicle 49.83 meters away. There is a vehicle 49.33 meters away. There is a vehicle 49.96 meters away. There is a vehicle 49.66 meters away. There is a vehicle 49.44 meters away. There is a vehicle 49.89 meters away. There is a vehicle 49.38 meters away. There is a vehicle 49.99 meters away. There is a vehicle"
 report += " Select 1) brake or 2) continue for me."
 selectAction(report)
 
@@ -149,8 +149,26 @@ selectAction(report)
 # Trial 9: pass
 # Trial 10: fail
 
-# In[ ]:
+# Vehicle lane follow test, fine-tuned:
+# Trial 1: pass
+# Trial 2: pass
+# Trial 3: pass
+# Trial 4: pass
+# Trial 5: pass
+# Trial 6: pass
+# Trial 7: fail
+# Trial 8: pass 
+# Trial 9: pass
+# Trial 10: fail
 
-
-
-
+# Vehicle obstacle test, fine-tuned:
+# Trial 1:  fail
+# Trial 2:  fail
+# Trial 3:  pass
+# Trial 4:  fail
+# Trial 5:  fail
+# Trial 6:  fail
+# Trial 7:  fail
+# Trial 8:  pass
+# Trial 9:  fail
+# Trial 10: fail
