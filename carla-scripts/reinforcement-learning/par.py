@@ -28,7 +28,7 @@ vec_env = HardEnv(ego_vehicle='car1')
 
 # ## Planner
 
-# In[3]:
+# In[2]:
 
 
 from openai import OpenAI
@@ -36,7 +36,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[4]:
+# In[3]:
 
 
 # OpenAI ChatCompletions API client initialization
@@ -45,7 +45,7 @@ client = OpenAI(
 )
 
 
-# In[5]:
+# In[4]:
 
 
 def selectAction(prompt):
@@ -67,7 +67,7 @@ selectAction("There is a motocycle directly in front of me that appears to be st
 
 # ## Reporter
 
-# In[7]:
+# In[6]:
 
 
 from llava.model.builder import load_pretrained_model
@@ -75,7 +75,7 @@ from llava.mm_utils import get_model_name_from_path
 from llava.eval.run_llava import eval_model
 
 
-# In[10]:
+# In[7]:
 
 
 vec_env = CustomEnv(ego_vehicle='car1')
@@ -84,13 +84,14 @@ obs, info = vec_env.reset()
 plt.imsave("basic.jpg", obs['image'][0],cmap='gray')
 
 # get initial llava report
-model_path = "liuhaotian/llava-v1.5-7b"
+model_path = "carla-llava-checkpoint/llava-v1.5-7b-task-lora"
+model_base = "liuhaotian/llava-v1.5-7b"
 prompt = "What are objects worth noting in the current scenario? What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving? Answer as the point of view of the driver in the image. I am driving at 40 mph. Be as succinct as possible."
 image_file = "basic.jpg"
 
 args = type('Args', (), {
     "model_path": model_path,
-    "model_base": None,
+    "model_base": model_base,
     "model_name": get_model_name_from_path(model_path),
     "query": prompt,
     "conv_mode": None,
@@ -104,10 +105,10 @@ args = type('Args', (), {
 eval_model(args)
 
 
-# In[16]:
+# In[18]:
 
 
-report = "In the image, there are several people and bicycles on the sidewalk, which might be a distraction for the driver. Additionally, there are two cars in the scene, one behind the ego vehicle and another further ahead. The cars are not a direct threat to the ego vehicle, but the driver should remain cautious and maintain a safe distance from the cars to avoid any potential accidents."
+report = "There is a vehicle 49.37 meters away. There is a vehicle 49.96 meters away. There is a vehicle 45.87 meters away. There is a vehicle 49.41 meters away. There is a vehicle 45.43 meters away. There is a vehicle 49.61 meters away. There is a vehicle 45.33 meters away. There is a vehicle 49.99 meters away. There is a vehicle 45.30 meters away. There is a vehicle 49.71 meters away. There is a vehicle 45.87 meters away. There is a vehicle 49.33 meters away. There is a vehicle 45.29 meters away. There is a vehicle 49.83 meters away. There is a vehicle 45.41 meters away. There is a vehicle 49.47 meters away. There is a vehicle 45.08 meters away. There is a vehicle 49.69 meters away. There is a vehicle 45.17 meters away. There is a vehicle 49.30 meters away. There is a vehicle 45.61 meters away. There is a vehicle 49.93 meters away. There is a vehicle 45.51 meters away. There is a vehicle 49.87 meters away. There is a vehicle 45.25 meters away. There is a vehicle 49.53 meters away. There is a vehicle 45.04 meters away. There is a vehicle 49.37 meters away. There is a vehicle 45.83 meters away. There is a vehicle 49.99 meters away. There is a vehicle 45.40 meters away. There is a vehicle 49.63 meters away. There is a vehicle 45.32 meters away. There is a vehicle 49.83 meters away. There is a vehicle 45.13 meters away. There is a vehicle 49.42 meters away. There is a vehicle 45.91 meters away. There is a vehicle 49.33 meters away. There is a vehicle 45.59 meters away. There is a vehicle"
 report += " Select 1) brake or 2) continue for me."
 selectAction(report)
 
@@ -135,3 +136,21 @@ selectAction(report)
 # Trial 8: pass
 # Trial 9: fail
 # Trial 10: pass
+
+# Vehicle lane follow test, fine-tuned:
+# Trial 1: pass
+# Trial 2: pass
+# Trial 3: pass
+# Trial 4: pass
+# Trial 5: pass
+# Trial 6: pass
+# Trial 7: fail
+# Trial 8: pass 
+# Trial 9: pass
+# Trial 10: fail
+
+# In[ ]:
+
+
+
+
