@@ -28,7 +28,7 @@ vec_env = HardEnv(ego_vehicle='car1')
 
 # ## Planner
 
-# In[22]:
+# In[2]:
 
 
 from openai import OpenAI
@@ -36,7 +36,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[23]:
+# In[3]:
 
 
 # OpenAI ChatCompletions API client initialization
@@ -45,7 +45,7 @@ client = OpenAI(
 )
 
 
-# In[24]:
+# In[4]:
 
 
 def selectAction(prompt):
@@ -67,7 +67,7 @@ selectAction("There is a motocycle directly in front of me that appears to be st
 
 # ## Reporter
 
-# In[6]:
+# In[5]:
 
 
 from llava.model.builder import load_pretrained_model
@@ -75,24 +75,17 @@ from llava.mm_utils import get_model_name_from_path
 from llava.eval.run_llava import eval_model
 
 
-# In[7]:
+# In[6]:
 
 
+vec_env = HardEnv(ego_vehicle='car1')
 obs, info = vec_env.reset()
-
-
-# In[8]:
-
 
 plt.imsave("basic.jpg", obs['image'][0],cmap='gray')
 
-
-# In[29]:
-
-
 # get initial llava report
 model_path = "liuhaotian/llava-v1.5-7b"
-prompt = "What are objects worth noting in the current scenario? What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving? Answer as the point of view of the driver in the image. Be as succinct as possible."
+prompt = "What are objects worth noting in the current scenario? What are the vehicles in the image, their positions, and are they a possible threat to the ego vehicle based on their driving? Answer as the point of view of the driver in the image. I am driving at 40 mph. Be as succinct as possible."
 image_file = "basic.jpg"
 
 args = type('Args', (), {
@@ -111,17 +104,25 @@ args = type('Args', (), {
 eval_model(args)
 
 
-# In[30]:
+# In[9]:
 
 
-report = "In the image, there is a black car driving down the road, and another car is following it. The black car is in the foreground, and the other car is in the background. The black car is driving in front of the other car, and the driver of the black car might feel a sense of superiority or ego. However, the driver should be cautious and aware of the other car's position, as it could potentially cause an accident if the driver does not maintain a safe distance or if the other car decides to overtake the black car."
+report = "In the image, there is a car driving in front of me, and another car is following behind me. The car in front is driving at a slower speed, which could be a threat to my ego vehicle. I am driving at 40 mph, and the car in front is driving at a slower speed, which might cause me to overtake it. However, I need to be cautious and maintain a safe distance from the car in front to avoid any accidents."
 report += " Select 1) brake or 2) continue for me."
 selectAction(report)
 
 
-# Vehicle obstacle test:
-# Trial 1: 
-# 
+# Vehicle obstacle test, zero-shot:
+# Trial 1: pass
+# Trial 2: pass
+# Trial 3: fail
+# Trial 4: fail
+# Trial 5: fail
+# Trial 6: pass
+# Trial 7: pass
+# Trial 8: fail
+# Trial 9: fail
+# Trial 10: pass
 
 # In[17]:
 
@@ -131,6 +132,12 @@ selectAction(report)
 #     obs, rewards, dones, truncated, info = vec_env.step(action)
 #     if dones:
 #         obs, info = vec_env.reset()
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
