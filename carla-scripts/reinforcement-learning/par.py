@@ -28,7 +28,7 @@ vec_env = HardEnv(ego_vehicle='car1')
 
 # ## Planner
 
-# In[2]:
+# In[3]:
 
 
 from openai import OpenAI
@@ -36,7 +36,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[3]:
+# In[4]:
 
 
 # OpenAI ChatCompletions API client initialization
@@ -45,7 +45,7 @@ client = OpenAI(
 )
 
 
-# In[4]:
+# In[5]:
 
 
 def selectAction(prompt):
@@ -59,7 +59,7 @@ def selectAction(prompt):
     return completion.choices[0].message.content.strip()
 
 
-# In[28]:
+# In[6]:
 
 
 selectAction("There is a motocycle directly in front of me that appears to be stoppping. Select 1) brake or 2) continue for me.")
@@ -67,7 +67,7 @@ selectAction("There is a motocycle directly in front of me that appears to be st
 
 # ## Reporter
 
-# In[5]:
+# In[7]:
 
 
 from llava.model.builder import load_pretrained_model
@@ -75,10 +75,10 @@ from llava.mm_utils import get_model_name_from_path
 from llava.eval.run_llava import eval_model
 
 
-# In[6]:
+# In[10]:
 
 
-vec_env = HardEnv(ego_vehicle='car1')
+vec_env = CustomEnv(ego_vehicle='car1')
 obs, info = vec_env.reset()
 
 plt.imsave("basic.jpg", obs['image'][0],cmap='gray')
@@ -104,15 +104,15 @@ args = type('Args', (), {
 eval_model(args)
 
 
-# In[9]:
+# In[16]:
 
 
-report = "In the image, there is a car driving in front of me, and another car is following behind me. The car in front is driving at a slower speed, which could be a threat to my ego vehicle. I am driving at 40 mph, and the car in front is driving at a slower speed, which might cause me to overtake it. However, I need to be cautious and maintain a safe distance from the car in front to avoid any accidents."
+report = "In the image, there are several people and bicycles on the sidewalk, which might be a distraction for the driver. Additionally, there are two cars in the scene, one behind the ego vehicle and another further ahead. The cars are not a direct threat to the ego vehicle, but the driver should remain cautious and maintain a safe distance from the cars to avoid any potential accidents."
 report += " Select 1) brake or 2) continue for me."
 selectAction(report)
 
 
-# Vehicle obstacle test, zero-shot:
+# Vehicle obstacle test:
 # Trial 1: pass
 # Trial 2: pass
 # Trial 3: fail
@@ -124,24 +124,14 @@ selectAction(report)
 # Trial 9: fail
 # Trial 10: pass
 
-# In[17]:
-
-
-# while True:
-#     action, _states = model.predict(obs)
-#     obs, rewards, dones, truncated, info = vec_env.step(action)
-#     if dones:
-#         obs, info = vec_env.reset()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+# Vehicle lane follow test, zero-shot:
+# Trial 1: fail
+# Trial 2: pass
+# Trial 3: pass
+# Trial 4: pass
+# Trial 5: pass
+# Trial 6: pass
+# Trial 7: fail
+# Trial 8: pass
+# Trial 9: fail
+# Trial 10: pass
