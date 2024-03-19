@@ -56,7 +56,7 @@ def selectAction(prompt):
     return completion.choices[0].message.content.strip()
 
 
-# In[4]:
+# In[ ]:
 
 
 selectAction("There is a car right in front of me.")
@@ -64,7 +64,7 @@ selectAction("There is a car right in front of me.")
 
 # ## Reporter
 
-# In[1]:
+# In[8]:
 
 
 from llava.model.builder import load_pretrained_model
@@ -72,24 +72,82 @@ from llava.mm_utils import get_model_name_from_path
 from llava.eval.run_llava import eval_model
 
 
-# In[2]:
+# In[4]:
 
 
+model_path = "liuhaotian/llava-v1.5-7b"
+prompt = "What are the things I should be cautious about when I visit here?"
+image_file = "https://llava-vl.github.io/static/images/view.jpg"
 
+args = type('Args', (), {
+    "model_path": model_path,
+    "model_base": None,
+    "model_name": get_model_name_from_path(model_path),
+    "query": prompt,
+    "conv_mode": None,
+    "image_file": image_file,
+    "sep": ",",
+    "temperature": 0,
+    "top_p": None,
+    "num_beams": 1,
+    "max_new_tokens": 512
+})()
+eval_model(args)
 
 
 # ## Actor-Reporter-Planner
 
+# In[3]:
+
+
+obs, info = vec_env.reset()
+
+
 # In[4]:
 
 
-obs, info = env.reset()
+vis_img = vec_env.render()
+
+
+# In[9]:
+
+
+obs['image'].shape
+
+
+# In[12]:
+
+
+plt.imsave("basic.jpg", obs['image'][0],cmap='gray')
+
+
+# In[9]:
+
+
+# get initial llava report
+model_path = "liuhaotian/llava-v1.5-7b"
+prompt = "What are objects worth noting in this driving scene and what are potential hazards?"
+image_file = "basic.jpg"
+
+args = type('Args', (), {
+    "model_path": model_path,
+    "model_base": None,
+    "model_name": get_model_name_from_path(model_path),
+    "query": prompt,
+    "conv_mode": None,
+    "image_file": image_file,
+    "sep": ",",
+    "temperature": 0,
+    "top_p": None,
+    "num_beams": 1,
+    "max_new_tokens": 512
+})()
+eval_model(args)
 
 
 # In[ ]:
 
 
-# TODO:
 # while True:
 #     action, _states = model.predict(obs)
 #     obs, rewards, dones, truncated, info = vec_env.step(action)
