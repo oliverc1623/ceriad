@@ -28,7 +28,9 @@ For CARLA, please follow the Nautilus GUI setup [guide](nautilus-files/README.md
 
 ### ChatGPT
 
-We leverage OpenAI's API to use ChatGPT-3.5-Turbo. 
+We leverage OpenAI's API to use ChatGPT-3.5-Turbo. Below is a demo showcasing ChatGPT's planning skills when presented with a driving scenario from Highway-env.
+
+![](images/planner-highway-env.png)
 
 ## Actor
 
@@ -49,6 +51,15 @@ We train PPO and SAC.
 
 ## Reporter
 
+The role of the reporter is to transform the Actor's observations and actions into a representation for the planner - in this case, text. 
+
 ### Hard-coded Reporter
 
+The hard-coded reporter is a trivial ad-lib style report generator. It parses Highway-Env states for relevant information such as the ego vehicle's pose, speed, and other agent's positions. This information is formatted into a legible reporter for the Planner to decide the next move. 
+
+See an example [here](reporter/hard-coded-reporter-highway-env.py)
+
 ### LLaVA  
+
+Text-based state spaces are not always available. CARLA, for instance, offers RGB cameras, LiDAR, and semantic segmentation sensors. This motivated us to fine-tune a VQA model so that we can pass in an image and generate a report of the driving scene. We [LLaVA](https://github.com/haotian-liu/LLaVA) for this implementation. 
+
