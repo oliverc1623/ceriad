@@ -1,6 +1,12 @@
 # Desktop GUI Setup for simulator environments
 
-## Nautilus GUI Desktop/CARLA Instruction
+## Contents
+
+- [Nautilus GUI Desktop](#nautilus-gui-desktop)
+- [CARLA Installation](#carla-installation-instructions)
+- [Common Problems](#common-errors-that-you-might-face)
+
+## Nautilus GUI Desktop
 
 ### 1. Follow the Nautilus setup tutorial to install the kubernetes command line and get access to the AIEA lab namespace
 
@@ -55,9 +61,7 @@ Run - `kubectl port-forward pod/[pod-name] :8080`
 
 ### 10. Run any program that requires graphics! 
 
----
-
-### CARLA Installation Instructions
+## CARLA Installation Instructions
 
 #### Disclaimer
 When installing Carla use the persistent value path `cd ../../mnt/persistent/` from the terminal, to have your data present whenever you port-forward the pod. If you don't do that, then you may lose your data every time you stop your connection.
@@ -90,7 +94,7 @@ add the flag `-prefernvidia` if carla is not running on the GPU.
 
 `python generate_traffic.py -p 4000 --tm-port 4050`
 
-### Common Errors that you might face
+## Common Errors that you might face
 - If you're having vulkan driver issues when running Carla on the Desktop GUI, try restarting or create a new deployment.
 - If you're facing "Transport endpoint is not connected" when your running cd command, try recreating your volumes or unmount them and run the pod again.
 - If you login and are stuck on a black screen, open the side menu and reduce the video bitrate (you can increase this after the GUI shows properly). 
