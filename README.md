@@ -77,3 +77,7 @@ More instructions coming soon! For now, checkout our sample scripts that combine
 
 ## Results
 
+For Highway-Env we compare ChatGPT's reasoning abilities against another framework that uses ChatGPT as an embodied reasoner.
+![](images/drivelikehumanbaseline.png)
+
+In CARLA, we demo the entire framework in action. The ego vehicle's task is to follow a car lane and avoid collision; there is a still vehicle obstacle. The Reporter gets a pair of images from the ego vehicle. The generated report is sent to the Planner which decides to pump to brakes to prevent an accident.
