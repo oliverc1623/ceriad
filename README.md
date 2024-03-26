@@ -4,12 +4,16 @@
 
 An extension of the Planner-Actor-Reporter framework applied to autonomous vehicles in Highway-Env and CARLA.
 
+![](images/main.png)
+
 ## Contents
 
 - [Install](#install)
 - [Planner](#planner)
 - [Actor](#actor)
 - [Reporter](#reporter)
+- [Putting it all together](#planner-actor-reporter)
+- [Results](#results)
 
 ## Install
 
@@ -62,4 +66,14 @@ See an example [here](reporter/hard-coded-reporter-highway-env.py)
 ### LLaVA  
 
 Text-based state spaces are not always available. CARLA, for instance, offers RGB cameras, LiDAR, and semantic segmentation sensors. This motivated us to fine-tune a VQA model so that we can pass in an image and generate a report of the driving scene. We [LLaVA](https://github.com/haotian-liu/LLaVA) for this implementation. 
+
+See the [data collector page](reporter/carla-data-collection/README.md) for more info on getting training data to fine-tune LLaVA.
+
+As for compute, we got by with two GeFORCE RTX-3090 in the Nautilus cluster. We would recommend a GPU with more video memory. 
+
+## Planner-Actor-Reporter
+
+More instructions coming soon! For now, checkout our sample scripts that combines all components [here](par.py)
+
+## Results
 
