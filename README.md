@@ -14,10 +14,10 @@ An extension of the Planner-Actor-Reporter framework applied to autonomous vehic
 ## Install
 
 If you only want to use Highway-env run the pip install commands:
-1. 
 ```
 pip install highway-env
 pip install stable-baselines3[extra]
+pip install openai
 ```
 
 For CARLA, please follow the Nautilus GUI setup [guide](nautilus-files/README.md).
@@ -36,7 +36,16 @@ The Actor component of this framework adaptation serves two purposes: (i) give f
 
 ### Highway-Env
 
+For Highway-Env we train a DQN model that accepts commands from the Planner. We made custom Highway-Envs that challenged ChatGPT's reasoning skills.
+
+![Highway-Env](images/scenario_12.png)
+
 ### CARLA
+
+In CARLA we present a simple DRL pipeline. Stacked gray-scaled images are passed into a CNN, concatenated with the ego vehicle's throttle, steering, and previous steering command. 
+We train PPO and SAC.
+
+![DRL pipeline](images/drl-fig.001.png)
 
 ## Reporter
 
