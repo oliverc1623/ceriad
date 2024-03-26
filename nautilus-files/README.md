@@ -100,4 +100,5 @@ add the flag `-prefernvidia` if carla is not running on the GPU.
 - If you login and are stuck on a black screen, open the side menu and reduce the video bitrate (you can increase this after the GUI shows properly). 
 - Sometimes the GUI will freeze all of a sudden. You can fix this by exiting the port-forward, ssh-ing into the pod, run `htop`, then kill the program `selkies-gstreamer` in white text using the most CPU. Exit the ssh pod and start a new port-forward.
 - CARLA, by default, uses port 8000 for any Traffic Manager related function calls. However, the Nautilus GUI is using port 8000. Thus, you will have to specify a new Traffic Manager Port.
+- You can request certain GPUs like in any pod in the yaml file.
 - For more information regarding this deployment use this link - https://docs.nationalresearchplatform.org/userdocs/running/gui-desktop/
