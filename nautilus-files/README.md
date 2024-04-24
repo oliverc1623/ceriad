@@ -90,6 +90,10 @@ It might show an error saying scipy or scikitlearn is not installed. If so, run 
 
 `./CarlaUE4.sh -carla-rpc-port=4000` # port num is up to you
 
+You might get an error saying "Cannot find a compatible Vulkan device...". Sometimes vulkan is not the default GPU driver in a Nautilus GUI pod with multiple GPUs. You can get around this by adding the flag
+
+`./CarlaUE4.sh -graphicsadapter=2`
+
 add the flag `-prefernvidia` if carla is not running on the GPU.
 
 `python generate_traffic.py -p 4000 --tm-port 4050`
