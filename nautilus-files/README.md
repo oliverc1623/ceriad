@@ -70,6 +70,8 @@ Run - `kubectl port-forward pod/[pod-name] 8080:8080`
 <br />You should see an output that looks like this: `Forwarding from 127.0.0.1:8080 -> 8080`
 <br />Copy and paste `127.0.0.1:8080` into your web browser 
 
+*Make sure to run this command in your local terminal where you have access to a web browser*
+
 ### 9. Localhost page 
 - The page should prompt you to enter the username which is "user" and password from line 50 of your secret from the pod's yaml file. 
 
