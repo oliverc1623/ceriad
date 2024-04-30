@@ -1,0 +1,105 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-xgl # replace with your ucsc username e.g. elochang-xgl
+spec:
+  hostname: xgl
+  containers:
+  - name: xgl
+    image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
+    env:
+    - name: TZ
+      value: "UTC"
+    - name: SIZEW
+      value: "1920"
+    - name: SIZEH
+      value: "1080"
+    - name: REFRESH
+      value: "60"
+    - name: DPI
+      value: "96"
+    - name: CDEPTH
+      value: "24"
+    - name: VIDEO_PORT
+      value: "DP-0"
+    - name: PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: my-pass # replace with the name of your first secret
+          key: my-password # replace with the key of your password
+    - name: WEBRTC_ENCODER
+      value: "nvh264enc"
+    - name: WEBRTC_ENABLE_RESIZE
+      value: "false"
+    - name: ENABLE_BASIC_AUTH
+      value: "true"
+    - name: TURN_HOST
+      value: "turn.nrp-nautilus.io"
+    - name: TURN_PORT
+      value: "3478"
+    - name: TURN_SHARED_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: my-pass # replace with the name of your first secret
+          # replace with the key of turn-secret 
+          # not the actual long secret code your should 
+          # have received from the element tech support
+          key: turn-secret 
+
+    - name: TURN_USERNAME
+      value: "username" # your username goes here
+    - name: TURN_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: turn-shared-secret # replace with your turn-shared-secret name
+          key: turn-shared # replace with turn-shared key
+    - name: TURN_PROTOCOL
+      value: "udp"
+    - name: TURN_TLS
+      value: "false"
+    stdin: true
+    tty: true
+    ports:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+    resources:
+      limits:
+        memory: 32Gi
+        cpu: "16"
+        nvidia.com/gpu: 2
+      requests:
+        memory: 16Gi
+        cpu: "4"
+        nvidia.com/gpu: 1
+    volumeMounts:
+    - mountPath: /dev/shm
+      name: dshm
+    - mountPath: /cache
+      name: xgl-cache-vol 
+    - mountPath: /mnt/persistent
+      name: xgl-root-vol 
+  dnsPolicy: None
+  dnsConfig:
+    nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  volumes:
+  - name: dshm
+    emptyDir:
+      medium: Memory
+  - name: xgl-cache-vol
+    persistentVolumeClaim:
+      claimName: elochang-xgl-cache # replace with your cache PVC
+  - name: xgl-root-vol
+    persistentVolumeClaim:
+      claimName: elochang-seaweed-volume # replace with your root PCV
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: nautilus.io/vis
+            operator: NotIn
+            values:
+            - suncave
