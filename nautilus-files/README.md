@@ -82,7 +82,16 @@ Run - `kubectl port-forward pod/[pod-name] 8080:8080`
 ## CARLA Installation Instructions
 
 #### Disclaimer
-When installing Carla use the persistent value path `cd ../../mnt/persistent/` from the terminal, to have your data present whenever you port-forward the pod. If you don't do that, then you may lose your data every time you stop your connection.
+When installing Carla use the persistent volume path `cd ../../mnt/persistent/` from the terminal, to have your data present whenever you port-forward the pod. If you don't do that, then you may lose your data every time you stop your connection. Note that is it not recommended to install Carla directly on the PCV - install Carla in your home directory for best performance.
+
+### Bash Script Way
+
+#### 1. Run the bash script, install_carla.sh
+
+You might need to run `chmod +x install_carla.sh` first if it is not executable.
+After, run `./install_carla.sh`.
+
+### Manual Way
 
 #### 1. Install Miniconda
 - https://docs.anaconda.com/free/miniconda/#quick-command-line-install
