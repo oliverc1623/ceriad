@@ -4,7 +4,7 @@
 
 An extension of the Planner-Actor-Reporter framework applied to autonomous vehicles in Highway-Env and CARLA.
 
-![](images/main.png)
+![final presentation](https://github.com/oliverc1623/ceriad/assets/40247275/cfff2796-297c-4115-a00f-4f59a62d23fc)
 
 ## Contents
 
