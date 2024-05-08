@@ -77,7 +77,7 @@ Run - `kubectl port-forward pod/[pod-name] 8080:8080`
 
 ### 10. Run any program that requires graphics! 
 
-**Once you have gained proficiency in using a GUI pod on Nautilus, you may Coen Adler <ctadler@ucsc.edu> or Shreedhar Jangam <sjangam@ucsc.edu> for permission to run a Deployment version**
+**Once you have gained proficiency in using a GUI pod on Nautilus, you may ask Coen Adler <ctadler@ucsc.edu> or Shreedhar Jangam <sjangam@ucsc.edu> for permission to run a Deployment version**
 
 ## CARLA Installation Instructions
 
