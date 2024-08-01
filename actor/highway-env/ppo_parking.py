@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import gymnasium as gym
-from stable_baselines3 import SAC
+from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
 from stable_baselines3.common.env_checker import check_env
 
@@ -19,12 +19,12 @@ check_env(env)
 #%%
 
 # Define the model
-model = SAC("MultiInputPolicy", env, verbose=1)
+model = PPO("MultiInputPolicy", env, verbose=1)
 
 #%%
 
 # Callbacks
-log_dir = Path("/root/../pvcvolume/highway-env-sac-logs/")
+log_dir = Path("/root/../pvcvolume/highway-env-ppo-logs/")
 if not log_dir.exists():
     log_dir.mkdir(parents=True)
 
