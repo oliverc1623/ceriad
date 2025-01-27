@@ -1,11 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-xgl # replace with your ucsc username e.g. elochang-xgl
+  name: chang-xgl-pod # replace with your ucsc username e.g. elochang-xgl
+  labels:
+      app: chang-xgl-pod
 spec:
-  hostname: xgl
+  hostname: chang-xgl-pod
   containers:
-  - name: xgl
+  - name: chang-xgl-pod
     image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
     env:
     - name: TZ
@@ -21,22 +23,30 @@ spec:
     - name: CDEPTH
       value: "24"
     - name: VIDEO_PORT
-      value: "DP-0"
+      value: "DFP"
     - name: PASSWD
       valueFrom:
         secretKeyRef:
           name: my-pass # replace with the name of your first secret
-          key: my-password # replace with the key of your password
+          key: my-pass # replace with the key of your password
     - name: WEBRTC_ENCODER
       value: "nvh264enc"
     - name: WEBRTC_ENABLE_RESIZE
       value: "false"
-    - name: ENABLE_BASIC_AUTH
+    - name: SELKIES_VIDEO_BITRATE
+      value: "8000"
+    - name: SELKIES_FRAMERATE
+      value: "60"
+    - name: SELKIES_AUDIO_BITRATE
+      value: "128000"
+    - name: SELKIES_ENABLE_BASIC_AUTH
       value: "true"
-    - name: TURN_HOST
-      value: "turn.nrp-nautilus.io"
-    - name: TURN_PORT
-      value: "3478"
+    - name: SELKIES_TURN_REST_URI
+      value: "http://turn-rest.nrp-nautilus.io"
+    - name: SELKIES_TURN_PROTOCOL
+      value: "udp"
+    - name: SELKIES_TURN_TLS
+      value: "false"
     - name: TURN_SHARED_SECRET
       valueFrom:
         secretKeyRef:
@@ -45,7 +55,6 @@ spec:
           # not the actual long secret code your should 
           # have received from the element tech support
           key: turn-secret 
-
     - name: TURN_USERNAME
       value: "username" # your username goes here
     - name: TURN_PASSWORD
@@ -53,21 +62,17 @@ spec:
         secretKeyRef:
           name: turn-shared-secret # replace with your turn-shared-secret name
           key: turn-shared # replace with turn-shared key
-    - name: TURN_PROTOCOL
-      value: "udp"
-    - name: TURN_TLS
-      value: "false"
     stdin: true
     tty: true
     ports:
-    - name: http
+    - name: http-svc
       containerPort: 8080
       protocol: TCP
     resources:
       limits:
         memory: 32Gi
         cpu: "16"
-        nvidia.com/gpu: 2
+        nvidia.com/gpu: 1
       requests:
         memory: 16Gi
         cpu: "4"
@@ -93,13 +98,13 @@ spec:
       claimName: elochang-xgl-cache # replace with your cache PVC
   - name: xgl-root-vol
     persistentVolumeClaim:
-      claimName: elochang-seaweed-volume # replace with your root PCV
+      claimName: elochang-volume2 # replace with your root PCV
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
-          - key: nautilus.io/vis
+          - key: topology.kubernetes.io/zone
             operator: NotIn
             values:
-            - suncave
+            - ucsd-suncave
